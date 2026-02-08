@@ -1,0 +1,121 @@
+@model ReviewQuizViewModel
+@{
+    ViewData["Title"] = "Xem Lại Bài Làm";
+    
+    var subjectNames = new Dictionary<string, string>
+    {
+        { "Toan", "Toán" },
+        { "TiengViet", "Tiếng Việt" },
+        { "TiengAnh", "Tiếng Anh" },
+        { "TNXH", "Tự Nhiên & Xã Hội" },
+        { "DaoDuc", "Đạo Đức" },
+        { "TinHoc", "Tin Học" },
+        { "MyThuat", "Mỹ Thuật" },
+        { "KhoaHoc", "Khoa Học" },
+        { "LichSu", "Lịch Sử" },
+        { "DiaLy", "Địa Lý" }
+    };
+    
+    var displayName = subjectNames.ContainsKey(Model.Subject) ? subjectNames[Model.Subject] : Model.Subject;
+}
+
+<div class="container">
+    <div class="quiz-container">
+        <!-- Header -->
+        <div class="text-center mb-4">
+            <a asp-action="Index" class="btn btn-outline-secondary mb-3">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            
+            <div class="mb-3">
+                <span class="badge bg-primary">@displayName</span>
+            </div>
+            
+            <h2>@Model.LessonTitle</h2>
+            
+            <div class="d-flex justify-content-center gap-4 my-4 flex-wrap">
+                <div class="text-center">
+                    <h3 class="mb-0 @(Model.IsPassed ? "text-success" : "text-danger")">@Model.Score/10</h3>
+                    <small class="text-muted">Điểm số</small>
+                </div>
+                <div class="text-center">
+                    <h3 class="mb-0 text-success">@Model.CorrectAnswers</h3>
+                    <small class="text-muted">Câu đúng</small>
+                </div>
+                <div class="text-center">
+                    <h3 class="mb-0 text-danger">@(Model.TotalQuestions - Model.CorrectAnswers)</h3>
+                    <small class="text-muted">Câu sai</small>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Questions Review -->
+        @foreach (var question in Model.Questions)
+        {
+            <div class="question-card fade-in @(question.IsCorrect ? "border-start border-5 border-success" : "border-start border-5 border-danger")" 
+                 style="animation-delay: @(question.QuestionNumber * 0.1)s;">
+                <div class="d-flex align-items-start mb-3">
+                    <span class="question-number" style="background: @(question.IsCorrect ? "var(--success-green)" : "var(--danger-red)");">
+                        @question.QuestionNumber
+                    </span>
+                    <div>
+                        <span class="question-text">@question.QuestionText</span>
+                        @if (question.IsCorrect)
+                        {
+                            <span class="badge bg-success ms-2">✓ Đúng</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger ms-2">✗ Sai</span>
+                        }
+                    </div>
+                </div>
+                
+                <div class="ps-5">
+                    @foreach (var answer in question.Answers)
+                    {
+                        var classes = new List<string> { "answer-option" };
+                        
+                        if (answer.IsCorrect)
+                        {
+                            classes.Add("correct");
+                        }
+                        else if (answer.IsSelected && !answer.IsCorrect)
+                        {
+                            classes.Add("wrong");
+                        }
+                        else if (!answer.IsSelected)
+                        {
+                            classes.Add("not-selected");
+                        }
+                        
+                        <div class="@string.Join(" ", classes)" style="cursor: default;">
+                            <span class="answer-label">@answer.AnswerLabel</span>
+                            <span class="answer-text">@answer.AnswerText</span>
+                            
+                            @if (answer.IsCorrect)
+                            {
+                                <span class="ms-auto badge bg-success">
+                                    <i class="bi bi-check"></i> Đáp án đúng
+                                </span>
+                            }
+                            else if (answer.IsSelected)
+                            {
+                                <span class="ms-auto badge bg-danger">
+                                    <i class="bi bi-x"></i> Bạn đã chọn
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+        
+        <!-- Back Button -->
+        <div class="text-center mt-4">
+            <a asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="bi bi-house"></i> Về Trang Chủ
+            </a>
+        </div>
+    </div>
+</div>

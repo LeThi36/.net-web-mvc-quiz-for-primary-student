@@ -1,0 +1,101 @@
+@model TakeQuizViewModel
+@{
+    ViewData["Title"] = "Làm Bài - " + Model.LessonTitle;
+    
+    var subjectNames = new Dictionary<string, string>
+    {
+        { "Toan", "Toán" },
+        { "TiengViet", "Tiếng Việt" },
+        { "TiengAnh", "Tiếng Anh" },
+        { "TNXH", "Tự Nhiên & Xã Hội" },
+        { "DaoDuc", "Đạo Đức" },
+        { "TinHoc", "Tin Học" },
+        { "MyThuat", "Mỹ Thuật" },
+        { "KhoaHoc", "Khoa Học" },
+        { "LichSu", "Lịch Sử" },
+        { "DiaLy", "Địa Lý" }
+    };
+    
+    var displayName = subjectNames.ContainsKey(Model.Subject) ? subjectNames[Model.Subject] : Model.Subject;
+}
+
+<div class="container">
+    <div class="quiz-container">
+        <!-- Quiz Header -->
+        <div class="text-center mb-4">
+            <a asp-action="Index" class="btn btn-outline-secondary mb-3">
+                <i class="bi bi-arrow-left"></i> Quay lại
+            </a>
+            <h2>
+                <span class="badge bg-primary me-2">@displayName</span>
+            </h2>
+            <h1 class="mb-2">@Model.LessonTitle</h1>
+            <p class="text-muted">Chọn đáp án đúng cho mỗi câu hỏi bên dưới</p>
+        </div>
+        
+        <form asp-action="SubmitQuiz" method="post" id="quizForm">
+            <input type="hidden" name="lessonId" value="@Model.LessonId" />
+            
+            @foreach (var question in Model.Questions)
+            {
+                <div class="question-card fade-in" style="animation-delay: @(question.QuestionNumber * 0.1)s;">
+                    <div class="d-flex align-items-start mb-3">
+                        <span class="question-number">@question.QuestionNumber</span>
+                        <span class="question-text">@question.QuestionText</span>
+                    </div>
+                    
+                    <div class="ps-5">
+                        @foreach (var answer in question.Answers)
+                        {
+                            <label class="answer-option" data-question="@question.QuestionId" data-answer="@answer.AnswerId">
+                                <input type="radio" name="answers[@question.QuestionId]" value="@answer.AnswerId" required />
+                                <span class="answer-label">@answer.AnswerLabel</span>
+                                <span class="answer-text">@answer.AnswerText</span>
+                            </label>
+                        }
+                    </div>
+                </div>
+            }
+            
+            <!-- Submit Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-success btn-xl" id="submitBtn">
+                    <i class="bi bi-send"></i> Nộp Bài
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Handle answer selection visual feedback
+        document.querySelectorAll('.answer-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const questionId = this.dataset.question;
+                const radio = this.querySelector('input[type="radio"]');
+                
+                // Remove selected class from all options in this question
+                document.querySelectorAll(`.answer-option[data-question="${questionId}"]`).forEach(opt => {
+                    opt.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked option
+                this.classList.add('selected');
+                radio.checked = true;
+            });
+        });
+        
+        // Confirm before submit
+        document.getElementById('quizForm').addEventListener('submit', function(e) {
+            const totalQuestions = @Model.Questions.Count;
+            const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
+            
+            if (answeredQuestions < totalQuestions) {
+                if (!confirm(`Bạn mới trả lời ${answeredQuestions}/${totalQuestions} câu. Bạn có muốn nộp bài không?`)) {
+                    e.preventDefault();
+                }
+            }
+        });
+    </script>
+}

@@ -1,0 +1,111 @@
+# Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Bb]in/
+[Oo]bj/
+publish/
+out/
+
+# .NET Core
+*.deps.json
+*.runtimeconfig.json
+
+# NuGet Packages
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# IDE / Editor
+.idea/
+.vs/
+.vscode/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# Rider
+.idea/
+*.sln.iml
+
+# Visual Studio
+*.aps
+*.ncb
+*.opensdf
+*.sdf
+*.cachefile
+*.VC.db
+*.VC.opendb
+
+# Logs
+*.log
+logs/
+*.blg
+*.diagsession
+*.etl
+*.iobj
+*.ipdb
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Secrets - NEVER commit these!
+appsettings.Development.json
+appsettings.Local.json
+appsettings.Secrets.json
+*.pfx
+*.p12
+secrets.json
+
+# Database
+*.db
+*.sqlite
+*.mdf
+*.ldf
+
+# Agent / AI Tools
+.agent/
+.gemini/
+.cursor/
+.continue/
+
+# Test Results
+TestResults/
+*.trx
+
+# Code coverage
+coverage/
+*.coverage
+*.coveragexml
+
+# JetBrains
+.idea/
+*.DotSettings.user
+
+# Azure
+.azure/
+azure-pipelines.yml.user
+
+# Misc
+*.tmp
+*.temp
+*.bak
+*.backup
+~$*

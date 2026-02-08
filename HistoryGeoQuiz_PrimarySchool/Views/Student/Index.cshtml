@@ -1,0 +1,175 @@
+@model StudentDashboardViewModel
+@{
+    ViewData["Title"] = "Trang Chủ Học Sinh";
+    
+    // Subject Mapping Helper
+    var subjectNames = new Dictionary<string, string>
+    {
+        { "Toan", "Toán" },
+        { "TiengViet", "Tiếng Việt" },
+        { "TiengAnh", "Tiếng Anh" },
+        { "TNXH", "Tự Nhiên & Xã Hội" },
+        { "DaoDuc", "Đạo Đức" },
+        { "TinHoc", "Tin Học" },
+        { "MyThuat", "Mỹ Thuật" },
+        { "KhoaHoc", "Khoa Học" },
+        { "LichSu", "Lịch Sử" },
+        { "DiaLy", "Địa Lý" }
+    };
+
+    var subjectIcons = new Dictionary<string, string>
+    {
+        { "Toan", "bi-calculator" }, { "TiengViet", "bi-book" }, { "TiengAnh", "bi-translate" },
+        { "TNXH", "bi-globe" }, { "DaoDuc", "bi-heart" }, { "TinHoc", "bi-laptop" },
+        { "MyThuat", "bi-palette" }, { "KhoaHoc", "bi-lightbulb" },
+        { "LichSu", "bi-clock-history" }, { "DiaLy", "bi-geo-alt" }
+    };
+    
+    var subjectDisplayNames = new Dictionary<string, string>
+    {
+        { "Toan", "🔢" }, { "TiengViet", "📚" }, { "TiengAnh", "🌎" }, { "TNXH", "🌿" },
+        { "DaoDuc", "⭐" }, { "TinHoc", "💻" }, { "MyThuat", "🎨" }, { "KhoaHoc", "🔬" },
+        { "LichSu", "📜" }, { "DiaLy", "🗺️" }
+    };
+}
+
+<div class="container">
+    <!-- Dashboard Header -->
+    <div class="dashboard-header" style="background: linear-gradient(135deg, var(--secondary-teal) 0%, var(--accent-purple) 100%);">
+        <h1 class="dashboard-title">
+            <i class="bi bi-stars me-2"></i>Xin chào, @ViewBag.UserName! 🌟
+        </h1>
+        <p class="text-white mb-2">
+            <i class="bi bi-people-fill me-1"></i> Lớp: <strong>@(ViewBag.ClassName ?? "Chưa phân lớp")</strong> | 
+            <i class="bi bi-person-badge me-1"></i> GVCN: <strong>@(ViewBag.HomeroomTeacher ?? "---")</strong>
+        </p>
+        <p class="dashboard-subtitle mb-0">Hãy chọn một bài học để bắt đầu làm bài trắc nghiệm nhé!</p>
+    </div>
+    
+    <!-- Recent Results -->
+    @if (Model.RecentResults.Any())
+    {
+        <section class="mb-5">
+            <h2 class="section-title">
+                <i class="bi bi-clock-history text-purple"></i> Kết Quả Gần Đây
+            </h2>
+            <div class="card">
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Bài học</th>
+                                    <th>Điểm</th>
+                                    <th>Kết quả</th>
+                                    <th>Thời gian</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var result in Model.RecentResults)
+                                {
+                                    <tr>
+                                        <td>
+                                            @{
+                                                var icon = subjectDisplayNames.ContainsKey(result.Lesson?.Subject ?? "") ? subjectDisplayNames[result.Lesson.Subject] : "📖";
+                                            }
+                                            <span class="badge bg-primary me-1">@icon</span>
+                                            @result.Lesson?.Title
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold @(result.Score >= 5 ? "text-success" : "text-danger")">
+                                                @result.Score/10
+                                            </span>
+                                        </td>
+                                        <td>
+                                            @if (result.IsPassed)
+                                            {
+                                                <span class="badge bg-success">✓ Đạt</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">✗ Chưa đạt</span>
+                                            }
+                                        </td>
+                                        <td class="text-muted small">@result.CompletedAt.ToString("dd/MM HH:mm")</td>
+                                        <td>
+                                            <a asp-action="ReviewQuiz" asp-route-testResultId="@result.Id" 
+                                               class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-eye"></i> Xem lại
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    }
+    
+    <!-- Lessons by Subject -->
+    @if (Model.Lessons.Any())
+    {
+        var lessonsBySubject = Model.Lessons.GroupBy(l => l.Subject).OrderBy(g => g.Key);
+        
+        foreach (var subjectGroup in lessonsBySubject)
+        {
+            var subjectKey = subjectGroup.Key;
+            var displayName = subjectNames.ContainsKey(subjectKey) ? subjectNames[subjectKey] : subjectKey;
+            var iconClass = subjectIcons.ContainsKey(subjectKey) ? subjectIcons[subjectKey] : "bi-book";
+            var sectionClass = subjectKey == "LichSu" ? "history" : (subjectKey == "DiaLy" ? "geography" : "default");
+            
+            <section class="mb-5">
+                <h2 class="section-title @sectionClass">
+                    <i class="bi @iconClass"></i> Bài Học @displayName
+                </h2>
+                
+                <div class="row g-4">
+                    @foreach (var lesson in subjectGroup.OrderBy(l => l.LessonNumber))
+                    {
+                        <div class="col-md-6 col-lg-4">
+                            <div class="card lesson-card h-100 @sectionClass">
+                                <div class="card-body d-flex flex-column">
+                                    <div class="lesson-number">@lesson.LessonNumber</div>
+                                    <h5 class="lesson-title">@lesson.Title</h5>
+                                    @if (!string.IsNullOrEmpty(lesson.Description))
+                                    {
+                                        <p class="lesson-info flex-grow-1">@lesson.Description</p>
+                                    }
+                                    <p class="lesson-info">
+                                        <i class="bi bi-question-circle me-1"></i>@lesson.QuestionCount câu hỏi
+                                    </p>
+                                    
+                                    @if (lesson.HasAttempted)
+                                    {
+                                        <div class="mb-3">
+                                            <span class="lesson-badge completed">
+                                                <i class="bi bi-check-circle me-1"></i>Đã làm - Điểm cao nhất: @lesson.BestScore
+                                            </span>
+                                        </div>
+                                    }
+                                    
+                                    <a asp-action="TakeQuiz" asp-route-lessonId="@lesson.Id" 
+                                       class="btn btn-primary w-100 mt-auto">
+                                        <i class="bi bi-play-circle"></i> 
+                                        @(lesson.HasAttempted ? "Làm Lại" : "Bắt Đầu Làm Bài")
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+    }
+    else
+    {
+        <div class="empty-state bg-white rounded-4 p-5 text-center">
+            <i class="bi bi-journal-plus" style="font-size: 5rem; color: var(--primary-orange);"></i>
+            <h3 class="mt-3">Chưa có bài học nào! 📚</h3>
+            <p class="text-muted mb-4">Hãy đợi giáo viên tạo bài học nhé!</p>
+        </div>
+    }
+</div>

@@ -1,0 +1,95 @@
+@model RegisterViewModel
+@{
+    ViewData["Title"] = "Đăng Ký";
+}
+
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <i class="bi bi-person-plus" style="font-size: 3rem;"></i>
+            <h2>Đăng Ký</h2>
+            <p>Tạo tài khoản mới để bắt đầu học!</p>
+        </div>
+        
+        <div class="auth-body">
+            <form asp-action="Register" method="post" id="registerForm">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                
+                <!-- Role Selector -->
+                <div class="mb-4">
+                    <label class="form-label">
+                        <i class="bi bi-people me-1"></i>Bạn là:
+                    </label>
+                    <div class="role-selector">
+                        <label class="role-option teacher" id="teacherOption">
+                            <input type="radio" asp-for="Role" value="Teacher" />
+                            <div class="role-icon">👩‍🏫</div>
+                            <div class="role-title">Giáo Viên</div>
+                        </label>
+                        <label class="role-option student selected" id="studentOption">
+                            <input type="radio" asp-for="Role" value="Student" checked />
+                            <div class="role-icon">👧</div>
+                            <div class="role-title">Học Sinh</div>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label">
+                        <i class="bi bi-person-badge me-1"></i>Họ và tên
+                    </label>
+                    <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên..." />
+                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Username" class="form-label">
+                        <i class="bi bi-person me-1"></i>Tên đăng nhập
+                    </label>
+                    <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập..." />
+                    <span asp-validation-for="Username" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-3">
+                    <label asp-for="Password" class="form-label">
+                        <i class="bi bi-lock me-1"></i>Mật khẩu
+                    </label>
+                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu..." />
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+                
+                <div class="mb-4">
+                    <label asp-for="ConfirmPassword" class="form-label">
+                        <i class="bi bi-lock-fill me-1"></i>Xác nhận mật khẩu
+                    </label>
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu..." />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-lg w-100">
+                    <i class="bi bi-person-plus"></i> Đăng Ký
+                </button>
+            </form>
+            
+            <hr class="my-4">
+            
+            <div class="text-center">
+                <p class="mb-0">Đã có tài khoản?</p>
+                <a asp-controller="Account" asp-action="Login" class="btn btn-outline-primary mt-2">
+                    <i class="bi bi-box-arrow-in-right"></i> Đăng Nhập
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('.role-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+    </script>
+}

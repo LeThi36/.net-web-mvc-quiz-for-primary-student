@@ -1,0 +1,102 @@
+@model List<TestResult>
+@{
+    ViewData["Title"] = "Lịch Sử Làm Bài";
+    
+    var subjectDisplayNames = new Dictionary<string, string>
+    {
+        { "Toan", "🔢" }, { "TiengViet", "📚" }, { "TiengAnh", "🌎" }, { "TNXH", "🌿" },
+        { "DaoDuc", "⭐" }, { "TinHoc", "💻" }, { "MyThuat", "🎨" }, { "KhoaHoc", "🔬" },
+        { "LichSu", "📜" }, { "DiaLy", "🗺️" }
+    };
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>
+            <i class="bi bi-clock-history text-primary me-2"></i>Lịch Sử Làm Bài
+        </h2>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Quay lại
+        </a>
+    </div>
+    
+    @if (Model.Any())
+    {
+        <div class="card">
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Bài học</th>
+                                <th>Điểm</th>
+                                <th>Đúng/Tổng</th>
+                                <th>Kết quả</th>
+                                <th>Thời gian</th>
+                                <th>Hành động</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var index = 1; }
+                            @foreach (var result in Model)
+                            {
+                                <tr>
+                                    <td class="fw-bold">@index</td>
+                                    <td>
+                                        @{
+                                            var icon = subjectDisplayNames.ContainsKey(result.Lesson?.Subject ?? "") ? subjectDisplayNames[result.Lesson.Subject] : "📖";
+                                        }
+                                        <span class="badge bg-primary me-1">@icon</span>
+                                        @result.Lesson?.Title
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold fs-5 @(result.Score >= 5 ? "text-success" : "text-danger")">
+                                            @result.Score
+                                        </span>/10
+                                    </td>
+                                    <td>
+                                        <span class="text-success">@result.CorrectAnswers</span>/@result.TotalQuestions
+                                    </td>
+                                    <td>
+                                        @if (result.IsPassed)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="bi bi-check-circle"></i> Đạt
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="bi bi-x-circle"></i> Chưa đạt
+                                            </span>
+                                        }
+                                    </td>
+                                    <td class="text-muted">@result.CompletedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                    <td>
+                                        <a asp-action="ReviewQuiz" asp-route-testResultId="@result.Id" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="bi bi-eye"></i> Xem lại
+                                        </a>
+                                    </td>
+                                </tr>
+                                index++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state bg-white rounded-4 p-5 text-center">
+            <i class="bi bi-journal-x" style="font-size: 5rem; color: var(--text-light);"></i>
+            <h3 class="mt-3">Chưa có lịch sử làm bài</h3>
+            <p class="text-muted mb-4">Hãy làm bài trắc nghiệm đầu tiên nhé!</p>
+            <a asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="bi bi-play-circle"></i> Bắt Đầu Học
+            </a>
+        </div>
+    }
+</div>

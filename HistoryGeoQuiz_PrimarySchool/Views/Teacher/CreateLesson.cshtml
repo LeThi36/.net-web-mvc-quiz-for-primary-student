@@ -1,0 +1,129 @@
+@model CreateLessonViewModel
+@{
+    ViewData["Title"] = "Tạo Bài Học Mới";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header">
+                    <i class="bi bi-plus-circle me-2"></i>Tạo Bài Học Mới
+                </div>
+                <div class="card-body">
+                    <form asp-action="CreateLesson" method="post" id="createLessonForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="ClassRoomId" class="form-label text-danger">
+                                <i class="bi bi-people me-1"></i>Lớp học (Bắt buộc)
+                            </label>
+                            <select asp-for="ClassRoomId" class="form-select" asp-items="ViewBag.ClassRooms">
+                                <option value="">-- Chọn Lớp --</option>
+                            </select>
+                            <span asp-validation-for="ClassRoomId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Subject" class="form-label">
+                                <i class="bi bi-bookmark me-1"></i>Môn học
+                            </label>
+                            <select asp-for="Subject" class="form-select">
+                                <option value="">-- Chọn Môn --</option>
+                                <option value="Toan">🔢 Toán</option>
+                                <option value="TiengViet">📚 Tiếng Việt</option>
+                                <option value="TiengAnh">🌎 Tiếng Anh</option>
+                                <option value="TNXH">🌿 TN & XH</option>
+                                <option value="LichSu">📜 Lịch Sử</option>
+                                <option value="DiaLy">🗺️ Địa Lý</option>
+                                <option value="KhoaHoc">🔬 Khoa Học</option>
+                                <option value="DaoDuc">⭐ Đạo Đức</option>
+                                <option value="AmNhac">🎵 Âm Nhạc</option>
+                                <option value="MyThuat">🎨 Mỹ Thuật</option>
+                                <option value="TheDuc">⚽ Thể Dục</option>
+                                <option value="TinHoc">💻 Tin Học</option>
+                            </select>
+                            <span asp-validation-for="Subject" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="LessonNumber" class="form-label">
+                                <i class="bi bi-123 me-1"></i>Số thứ tự bài
+                            </label>
+                            <input asp-for="LessonNumber" class="form-control" type="number" min="1" max="100" />
+                            <span asp-validation-for="LessonNumber" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <label asp-for="QuestionCountForExcellent" class="form-label">
+                                    <i class="bi bi-trophy me-1"></i>Số câu đúng đạt "Xuất sắc"
+                                </label>
+                                <input asp-for="QuestionCountForExcellent" class="form-control" type="number" placeholder="Mặc định: 90%" />
+                                <span asp-validation-for="QuestionCountForExcellent" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="QuestionCountForGood" class="form-label">
+                                    <i class="bi bi-star me-1"></i>Số câu đúng đạt "Tốt"
+                                </label>
+                                <input asp-for="QuestionCountForGood" class="form-control" type="number" placeholder="Mặc định: 70%" />
+                                <span asp-validation-for="QuestionCountForGood" class="text-danger small"></span>
+                            </div>
+                            <small class="text-muted fst-italic mt-1">* Nếu để trống hệ thống sẽ tự tính theo tỷ lệ mặc định.</small>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Title" class="form-label">
+                                <i class="bi bi-card-heading me-1"></i>Tên bài học
+                            </label>
+                            <input asp-for="Title" class="form-control" placeholder="Ví dụ: Bài 1 - Nước Văn Lang" />
+                            <span asp-validation-for="Title" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label">
+                                <i class="bi bi-card-text me-1"></i>Mô tả (không bắt buộc)
+                            </label>
+                            <textarea asp-for="Description" class="form-control" rows="3" 
+                                      placeholder="Mô tả ngắn gọn về nội dung bài học..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+                        
+                        <div class="d-flex gap-3">
+                            <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                                <i class="bi bi-check-circle"></i> Tạo Bài Học
+                            </button>
+                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        // Prevent double submit
+        document.getElementById('createLessonForm').addEventListener('submit', function(e) {
+            var submitBtn = document.getElementById('submitBtn');
+            if (submitBtn.disabled) {
+                e.preventDefault();
+                return false;
+            }
+            
+            // Disable button and show loading state
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Đang tạo...';
+            
+            // Re-enable after 5 seconds as fallback
+            setTimeout(function() {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-check-circle"></i> Tạo Bài Học';
+            }, 5000);
+        });
+    </script>
+}

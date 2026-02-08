@@ -1,0 +1,107 @@
+@{
+    ViewData["Title"] = "Trang Chủ";
+}
+
+<div class="container">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <h1 class="hero-title">
+            Chào mừng đến với <span>Học Tập Tiểu Học</span>! 🌟
+        </h1>
+        <p class="hero-subtitle">
+            Cùng khám phá tất cả các môn học qua các bài trắc nghiệm thú vị!
+        </p>
+        
+        <div class="hero-image">
+            <i class="bi bi-mortarboard" style="font-size: 8rem; color: var(--secondary-teal);"></i>
+        </div>
+        
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-xl">
+                <i class="bi bi-box-arrow-in-right"></i> Đăng nhập
+            </a>
+            <a asp-controller="Account" asp-action="Register" class="btn btn-secondary btn-xl">
+                <i class="bi bi-person-plus"></i> Đăng ký
+            </a>
+        </div>
+    </section>
+
+    <!-- Subject Cards -->
+    <section class="feature-cards">
+        <div class="feature-card fade-in">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">
+                <span style="font-size: 2.5rem;">🔢</span>
+            </div>
+            <h3 class="feature-title">Toán</h3>
+            <p class="feature-desc">Luyện tập tính toán, hình học và giải toán có lời văn.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="animation-delay: 0.1s;">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">
+                <span style="font-size: 2.5rem;">📚</span>
+            </div>
+            <h3 class="feature-title">Tiếng Việt</h3>
+            <p class="feature-desc">Đọc hiểu, chính tả và ngữ pháp tiếng Việt.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="animation-delay: 0.2s;">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <span style="font-size: 2.5rem;">🌎</span>
+            </div>
+            <h3 class="feature-title">Tiếng Anh</h3>
+            <p class="feature-desc">Từ vựng, ngữ pháp cơ bản và hội thoại tiếng Anh.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="animation-delay: 0.3s;">
+            <div class="feature-icon" style="background: linear-gradient(135deg, #43e97b, #38f9d7);">
+                <span style="font-size: 2.5rem;">🌿</span>
+            </div>
+            <h3 class="feature-title">TN & XH</h3>
+            <p class="feature-desc">Tự nhiên xã hội - Khám phá thế giới xung quanh.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="animation-delay: 0.4s;">
+            <div class="feature-icon history">
+                <i class="bi bi-book"></i>
+            </div>
+            <h3 class="feature-title">Lịch Sử</h3>
+            <p class="feature-desc">Tìm hiểu các sự kiện lịch sử và anh hùng dân tộc.</p>
+        </div>
+        
+        <div class="feature-card fade-in" style="animation-delay: 0.5s;">
+            <div class="feature-icon geography">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+            <h3 class="feature-title">Địa Lý</h3>
+            <p class="feature-desc">Khám phá địa hình, khí hậu và vùng miền Việt Nam.</p>
+        </div>
+    </section>
+    
+    <!-- How it works -->
+    <section class="text-center mt-5 pt-4">
+        <h2 class="mb-4">🎯 Cách Sử Dụng</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="lesson-number mx-auto mb-3">1</div>
+                    <h4>Đăng ký tài khoản</h4>
+                    <p class="text-muted">Tạo tài khoản miễn phí với vai trò học sinh hoặc giáo viên</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="lesson-number mx-auto mb-3" style="background: linear-gradient(135deg, var(--secondary-teal), var(--accent-purple));">2</div>
+                    <h4>Chọn bài học</h4>
+                    <p class="text-muted">Chọn môn học và bài mà con muốn ôn tập</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="p-4 bg-white rounded-4 h-100 shadow-sm">
+                    <div class="lesson-number mx-auto mb-3" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">3</div>
+                    <h4>Làm bài & Xem kết quả</h4>
+                    <p class="text-muted">Trả lời câu hỏi và xem ngay kết quả đúng sai</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>

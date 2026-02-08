@@ -1,0 +1,87 @@
+@{
+    ViewData["Title"] = "Import Câu Hỏi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="bi bi-file-earmark-spreadsheet"></i> Import Câu Hỏi Từ File Excel</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong><i class="bi bi-info-circle"></i> Hướng dẫn nhập file:</strong><br/>
+                        <ul>
+                            <li>File phải là định dạng <strong>.XLSX</strong> (Excel mặc định).</li>
+                            <li>Dòng đầu tiên của file Excel phải chứa đúng tên các cột sau:</li>
+                        </ul>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-sm bg-white text-center">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Cot1</th>
+                                        <th>Cot2</th>
+                                        <th>Cot3</th>
+                                        <th>Cot4</th>
+                                        <th>Cot5</th>
+                                        <th>Cot6</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><code>NoiDungCauHoi</code></td>
+                                        <td><code>DapAnA</code></td>
+                                        <td><code>DapAnB</code></td>
+                                        <td><code>DapAnC</code></td>
+                                        <td><code>DapAnD</code></td>
+                                        <td><code>DapAnDung</code></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-start small">Nội dung câu hỏi</td>
+                                        <td class="text-start small">Nội dung đáp án A</td>
+                                        <td class="text-start small">Nội dung đáp án B</td>
+                                        <td class="text-start small">Nội dung đáp án C</td>
+                                        <td class="text-start small">Nội dung đáp án D</td>
+                                        <td class="text-start small">Nhập ký tự: <strong>A</strong>, <strong>B</strong>, <strong>C</strong> hoặc <strong>D</strong></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p class="mb-0 text-muted fst-italic small">* Lưu ý: Tên cột viết liền không dấu. Không được đổi tên cột.</p>
+                        <div class="mt-3">
+                            <a asp-action="DownloadTemplate" class="btn btn-sm btn-outline-success">
+                                <i class="bi bi-download"></i> Tải file mẫu (.xlsx)
+                            </a>
+                        </div>
+                    </div>
+
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <div asp-validation-summary="All"></div>
+                        </div>
+                    }
+
+                    <form asp-action="UploadQuestions" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="lessonId" value="@ViewBag.LessonId" />
+                        
+                        <div class="mb-4">
+                            <label class="form-label control-label fw-bold">Chọn file Excel (.xlsx)</label>
+                            <input type="file" name="file" class="form-control" accept=".xlsx,.xls" required />
+                        </div>
+
+                        <div class="d-grid gap-2">
+                             <button type="submit" class="btn btn-success">
+                                 <i class="bi bi-upload"></i> Tải Lên Ngay
+                             </button>
+                             <a asp-action="ManageQuestions" asp-route-lessonId="@ViewBag.LessonId" class="btn btn-secondary">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

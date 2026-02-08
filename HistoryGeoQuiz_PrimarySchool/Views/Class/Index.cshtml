@@ -1,0 +1,178 @@
+@model IEnumerable<HistoryGeoQuiz_PrimarySchool.Models.ClassRoom>
+
+@{
+    ViewData["Title"] = "Quản lý Lớp học";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var totalItems = ViewBag.TotalItems ?? 0;
+    var pageSize = ViewBag.PageSize ?? 9;
+    var currentGrade = ViewBag.CurrentGrade as int?;
+    
+    var startIndex = (currentPage - 1) * pageSize + 1;
+    var endIndex = Math.Min(currentPage * pageSize, totalItems);
+}
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>📚 Danh sách Lớp học</h2>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Thêm Lớp Mới
+        </a>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="card shadow-sm mb-3">
+        <div class="card-body">
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+                <span class="fw-bold me-2">🎓 Lọc theo khối:</span>
+                
+                @if (!currentGrade.HasValue)
+                {
+                    <span class="badge bg-dark px-3 py-2">Tất cả</span>
+                }
+                else
+                {
+                    <a href="@Url.Action("Index")" class="badge bg-secondary px-3 py-2 text-decoration-none">Tất cả</a>
+                }
+                
+                @for (int i = 1; i <= 5; i++)
+                {
+                    var isActive = currentGrade.HasValue && currentGrade.Value == i;
+                    var badgeClass = isActive ? "bg-primary" : "bg-light text-dark";
+                    
+                    if (isActive)
+                    {
+                        <span class="badge @badgeClass px-3 py-2">Khối @i</span>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", new { grade = i })" class="badge @badgeClass px-3 py-2 text-decoration-none">Khối @i</a>
+                    }
+                }
+                
+                @if (totalItems > 0)
+                {
+                    <span class="ms-auto text-muted">
+                        Đang hiển thị <strong>@startIndex-@endIndex</strong> trong tổng <strong>@totalItems</strong> lớp học
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (totalItems == 0)
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox" style="font-size: 3rem; color: #ccc;"></i>
+                    <p class="mt-3 text-muted">
+                        @if (currentGrade.HasValue)
+                        {
+                            <span>Không tìm thấy lớp học nào thuộc <strong>Khối @currentGrade</strong></span>
+                        }
+                        else
+                        {
+                            <span>Chưa có lớp học nào trong hệ thống</span>
+                        }
+                    </p>
+                </div>
+            }
+            else
+            {
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Tên Lớp</th>
+                            <th>Khối</th>
+                            <th>GV Chủ Nhiệm</th>
+                            <th>Sĩ số</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold text-primary">@item.ClassName</td>
+                                <td><span class="badge bg-secondary">Khối @item.Grade</span></td>
+                                <td>@(item.HomeroomTeacher != null ? item.HomeroomTeacher.FullName : "---")</td>
+                                <td>@item.Students.Count học sinh</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info text-white" title="Chi tiết">
+                                        <i class="bi bi-eye"></i> Xem
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning text-white" title="Sửa">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    @if (totalPages > 1)
+    {
+        <nav aria-label="Class pagination" class="mt-3">
+            <ul class="pagination justify-content-center">
+                <!-- Previous Button -->
+                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { grade = currentGrade, page = currentPage - 1 })" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+
+                <!-- Page Numbers -->
+                @{
+                    var startPage = Math.Max(1, currentPage - 2);
+                    var endPage = Math.Min(totalPages, currentPage + 2);
+                    
+                    // Always show first page if not in range
+                    if (startPage > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { grade = currentGrade, page = 1 })">1</a>
+                        </li>
+                        if (startPage > 2)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                    }
+                    
+                    // Page range
+                    for (int i = startPage; i <= endPage; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { grade = currentGrade, page = i })">@i</a>
+                        </li>
+                    }
+                    
+                    // Always show last page if not in range
+                    if (endPage < totalPages)
+                    {
+                        if (endPage < totalPages - 1)
+                        {
+                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                        }
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { grade = currentGrade, page = totalPages })">@totalPages</a>
+                        </li>
+                    }
+                }
+
+                <!-- Next Button -->
+                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { grade = currentGrade, page = currentPage + 1 })" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    }
+</div>

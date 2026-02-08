@@ -1,0 +1,82 @@
+@model QuizResultViewModel
+@{
+    ViewData["Title"] = "Kết Quả Bài Làm";
+    
+    var subjectNames = new Dictionary<string, string>
+    {
+        { "Toan", "Toán" },
+        { "TiengViet", "Tiếng Việt" },
+        { "TiengAnh", "Tiếng Anh" },
+        { "TNXH", "Tự Nhiên & Xã Hội" },
+        { "DaoDuc", "Đạo Đức" },
+        { "TinHoc", "Tin Học" },
+        { "MyThuat", "Mỹ Thuật" },
+        { "KhoaHoc", "Khoa Học" },
+        { "LichSu", "Lịch Sử" },
+        { "DiaLy", "Địa Lý" }
+    };
+    
+    var displayName = subjectNames.ContainsKey(Model.Subject) ? subjectNames[Model.Subject] : Model.Subject;
+}
+
+<div class="container">
+    <div class="result-container">
+        <div class="result-card fade-in">
+            <!-- Result Icon -->
+            @if (Model.IsPassed)
+            {
+                <div class="result-icon passed">
+                    <i class="bi bi-trophy-fill"></i>
+                </div>
+            }
+            else
+            {
+                <div class="result-icon failed">
+                    <i class="bi bi-emoji-frown"></i>
+                </div>
+            }
+            
+            <!-- Subject Badge -->
+            <div class="mb-3">
+                <span class="badge bg-primary">@displayName</span>
+            </div>
+            
+            <h3 class="mb-2">@Model.LessonTitle</h3>
+            
+            <!-- Score -->
+            <div class="result-score">
+                <span class="@(Model.IsPassed ? "text-success" : "text-danger")">@Model.Score</span>/10
+            </div>
+            
+            <!-- Message -->
+            <p class="result-message">@Model.Message</p>
+            
+            <!-- Details -->
+            <div class="result-details">
+                <div class="result-stat">
+                    <div class="result-stat-value text-success">@Model.CorrectAnswers</div>
+                    <div class="result-stat-label">Câu đúng ✓</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value text-danger">@(Model.TotalQuestions - Model.CorrectAnswers)</div>
+                    <div class="result-stat-label">Câu sai ✗</div>
+                </div>
+                <div class="result-stat">
+                    <div class="result-stat-value text-primary">@Model.TotalQuestions</div>
+                    <div class="result-stat-label">Tổng số câu</div>
+                </div>
+            </div>
+            
+            <!-- Actions -->
+            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                <a asp-action="ReviewQuiz" asp-route-testResultId="@Model.TestResultId" 
+                   class="btn btn-primary btn-lg">
+                    <i class="bi bi-eye"></i> Xem Lại Bài Làm
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
+                    <i class="bi bi-house"></i> Về Trang Chủ
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
