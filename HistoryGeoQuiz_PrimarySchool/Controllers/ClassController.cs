@@ -113,6 +113,16 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             {
                 try
                 {
+                    // Ensure DateTime is UTC for PostgreSQL
+                    if (classRoom.CreatedAt.Kind == DateTimeKind.Unspecified)
+                    {
+                        classRoom.CreatedAt = DateTime.SpecifyKind(classRoom.CreatedAt, DateTimeKind.Utc);
+                    }
+                    else if (classRoom.CreatedAt.Kind == DateTimeKind.Local)
+                    {
+                        classRoom.CreatedAt = classRoom.CreatedAt.ToUniversalTime();
+                    }
+                    
                     _context.Update(classRoom);
                     await _context.SaveChangesAsync();
                 }

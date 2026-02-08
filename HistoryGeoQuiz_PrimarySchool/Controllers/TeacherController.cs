@@ -80,11 +80,12 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
                 return RedirectToAction("Login", "Account");
 
             var userId = GetCurrentUserId();
-            // Get classes assigned to teacher
+            // Get classes assigned to teacher (distinct to avoid duplicates when teacher has multiple subjects in same class)
             var assignedClasses = await _context.TeacherAssignments
                 .Include(ta => ta.ClassRoom)
                 .Where(ta => ta.TeacherId == userId)
-                .Select(ta => new { ta.ClassRoomId, ta.ClassRoom.ClassName, ta.Subject })
+                .Select(ta => new { ta.ClassRoomId, ta.ClassRoom.ClassName })
+                .Distinct()
                 .ToListAsync();
 
             ViewBag.ClassRooms = new Microsoft.AspNetCore.Mvc.Rendering.SelectList(assignedClasses, "ClassRoomId", "ClassName");
