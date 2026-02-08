@@ -18,7 +18,7 @@
                             <label asp-for="ClassRoomId" class="form-label text-danger">
                                 <i class="bi bi-people me-1"></i>Lớp học (Bắt buộc)
                             </label>
-                            <select asp-for="ClassRoomId" class="form-select" asp-items="ViewBag.ClassRooms">
+                            <select asp-for="ClassRoomId" class="form-select" asp-items="ViewBag.ClassRooms" id="classRoomSelect">
                                 <option value="">-- Chọn Lớp --</option>
                             </select>
                             <span asp-validation-for="ClassRoomId" class="text-danger small"></span>
@@ -28,22 +28,13 @@
                             <label asp-for="Subject" class="form-label">
                                 <i class="bi bi-bookmark me-1"></i>Môn học
                             </label>
-                            <select asp-for="Subject" class="form-select">
-                                <option value="">-- Chọn Môn --</option>
-                                <option value="Toan">🔢 Toán</option>
-                                <option value="TiengViet">📚 Tiếng Việt</option>
-                                <option value="TiengAnh">🌎 Tiếng Anh</option>
-                                <option value="TNXH">🌿 TN & XH</option>
-                                <option value="LichSu">📜 Lịch Sử</option>
-                                <option value="DiaLy">🗺️ Địa Lý</option>
-                                <option value="KhoaHoc">🔬 Khoa Học</option>
-                                <option value="DaoDuc">⭐ Đạo Đức</option>
-                                <option value="AmNhac">🎵 Âm Nhạc</option>
-                                <option value="MyThuat">🎨 Mỹ Thuật</option>
-                                <option value="TheDuc">⚽ Thể Dục</option>
-                                <option value="TinHoc">💻 Tin Học</option>
+                            <select asp-for="Subject" class="form-select" id="subjectSelect" disabled>
+                                <option value="">-- Chọn Lớp Dạy --</option>
                             </select>
                             <span asp-validation-for="Subject" class="text-danger small"></span>
+                            <small id="subjectHint" class="text-muted d-none">
+                                <i class="bi bi-info-circle me-1"></i>Chỉ hiển thị các môn bạn được phân công dạy ở lớp này.
+                            </small>
                         </div>
                         
                         <div class="mb-4">
@@ -107,6 +98,55 @@
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
+        // Load subjects dynamically when class is selected
+        document.getElementById('classRoomSelect').addEventListener('change', function() {
+            var classRoomId = this.value;
+            var subjectSelect = document.getElementById('subjectSelect');
+            var subjectHint = document.getElementById('subjectHint');
+            
+            // Clear current options
+            subjectSelect.innerHTML = '';
+            
+            if (!classRoomId) {
+                // No class selected
+                subjectSelect.innerHTML = '<option value="">-- Chọn Lớp trước --</option>';
+                subjectSelect.disabled = true;
+                subjectHint.classList.add('d-none');
+                return;
+            }
+            
+            // Show loading state
+            subjectSelect.innerHTML = '<option value="">Đang tải...</option>';
+            subjectSelect.disabled = true;
+            
+            // Fetch subjects for this class
+            fetch('/Teacher/GetSubjectsByClass?classRoomId=' + classRoomId)
+                .then(response => response.json())
+                .then(data => {
+                    subjectSelect.innerHTML = '<option value="">-- Chọn Môn --</option>';
+                    
+                    if (data.length === 0) {
+                        subjectSelect.innerHTML = '<option value="">Không có môn nào được phân công</option>';
+                        subjectSelect.disabled = true;
+                        subjectHint.classList.add('d-none');
+                    } else {
+                        data.forEach(function(item) {
+                            var option = document.createElement('option');
+                            option.value = item.value;
+                            option.textContent = item.text;
+                            subjectSelect.appendChild(option);
+                        });
+                        subjectSelect.disabled = false;
+                        subjectHint.classList.remove('d-none');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading subjects:', error);
+                    subjectSelect.innerHTML = '<option value="">Lỗi tải môn học</option>';
+                    subjectSelect.disabled = true;
+                });
+        });
+
         // Prevent double submit
         document.getElementById('createLessonForm').addEventListener('submit', function(e) {
             var submitBtn = document.getElementById('submitBtn');

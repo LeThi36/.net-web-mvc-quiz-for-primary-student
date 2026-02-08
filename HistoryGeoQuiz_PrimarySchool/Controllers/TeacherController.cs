@@ -615,5 +615,52 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
 
             return RedirectToAction("ManageQuestions", new { lessonId = lessonId });
         }
+
+        // API: Get subjects that teacher is assigned to teach in a specific class
+        [HttpGet]
+        public async Task<IActionResult> GetSubjectsByClass(int classRoomId)
+        {
+            if (!IsTeacher())
+                return Unauthorized();
+
+            var userId = GetCurrentUserId();
+            
+            // Get subjects that this teacher is assigned to teach in this specific class
+            var subjects = await _context.TeacherAssignments
+                .Where(ta => ta.TeacherId == userId && ta.ClassRoomId == classRoomId)
+                .Select(ta => ta.Subject)
+                .Distinct()
+                .ToListAsync();
+
+            // Map subject codes to display names with emojis
+            var subjectList = subjects.Select(s => new
+            {
+                Value = s,
+                Text = GetSubjectDisplayName(s)
+            }).ToList();
+
+            return Json(subjectList);
+        }
+
+        // Helper: Get subject display name with emoji
+        private string GetSubjectDisplayName(string subjectCode)
+        {
+            return subjectCode switch
+            {
+                "Toan" => "🔢 Toán",
+                "TiengViet" => "📚 Tiếng Việt",
+                "TiengAnh" => "🌎 Tiếng Anh",
+                "TNXH" => "🌿 TN & XH",
+                "LichSu" => "📜 Lịch Sử",
+                "DiaLy" => "🗺️ Địa Lý",
+                "KhoaHoc" => "🔬 Khoa Học",
+                "DaoDuc" => "⭐ Đạo Đức",
+                "AmNhac" => "🎵 Âm Nhạc",
+                "MyThuat" => "🎨 Mỹ Thuật",
+                "TheDuc" => "⚽ Thể Dục",
+                "TinHoc" => "💻 Tin Học",
+                _ => subjectCode
+            };
+        }
     }
 }
