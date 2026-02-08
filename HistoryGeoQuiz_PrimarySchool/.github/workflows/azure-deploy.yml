@@ -2,11 +2,11 @@ name: Deploy to Azure App Service
 
 on:
   push:
-    branches: [ main ]
+    branches: [ develop ]
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: hoctap-primaryschool  # ĐỔI TÊN NÀY THÀNH TÊN APP AZURE CỦA BẠN
+  AZURE_WEBAPP_NAME: quiz-primaryschool
   DOTNET_VERSION: '8.0.x'
 
 jobs:
