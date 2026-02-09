@@ -1,0 +1,78 @@
+@model HistoryGeoQuiz_PrimarySchool.ViewModels.AssignExistingStudentViewModel
+
+@{
+    ViewData["Title"] = "Thêm Học Sinh Có Sẵn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-check"></i> 
+                        Thêm Học Sinh Có Sẵn Vào Lớp @Model.ClassName
+                    </h5>
+                </div>
+                <div class="card-body">
+                    @if (Model.AvailableStudents.Any())
+                    {
+                        <div class="alert alert-light border">
+                            <i class="bi bi-info-circle text-info"></i>
+                            Chọn học sinh từ danh sách dưới đây để thêm vào lớp.
+                            Đây là những học sinh chưa thuộc lớp nào.
+                        </div>
+
+                        <form asp-action="AssignExistingStudent" method="post">
+                            <input type="hidden" asp-for="ClassRoomId" />
+
+                            <div class="mb-4">
+                                <label asp-for="StudentId" class="form-label">
+                                    <i class="bi bi-person"></i> Chọn học sinh <span class="text-danger">*</span>
+                                </label>
+                                <select asp-for="StudentId" class="form-select form-select-lg">
+                                    <option value="">-- Chọn học sinh --</option>
+                                    @foreach (var student in Model.AvailableStudents)
+                                    {
+                                        <option value="@student.Id">@student.DisplayName</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="StudentId" class="text-danger small"></span>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-info btn-lg text-white">
+                                    <i class="bi bi-person-plus"></i> Thêm Vào Lớp
+                                </button>
+                                <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Quay lại
+                                </a>
+                            </div>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="text-center py-4">
+                            <i class="bi bi-person-x text-muted" style="font-size: 4rem;"></i>
+                            <h5 class="mt-3 text-muted">Không có học sinh nào chưa có lớp</h5>
+                            <p class="text-muted">Tất cả học sinh đã được phân vào các lớp hoặc chưa có học sinh nào trong hệ thống.</p>
+                            <div class="d-flex gap-2 justify-content-center mt-3">
+                                <a asp-action="AddStudent" asp-route-id="@Model.ClassRoomId" class="btn btn-primary">
+                                    <i class="bi bi-person-plus"></i> Tạo Học Sinh Mới
+                                </a>
+                                <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Quay lại
+                                </a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

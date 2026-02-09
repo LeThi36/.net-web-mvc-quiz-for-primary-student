@@ -1,0 +1,130 @@
+@model HistoryGeoQuiz_PrimarySchool.ViewModels.ImportStudentsResultViewModel
+
+@{
+    ViewData["Title"] = "Kết Quả Import";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Summary Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-clipboard-check"></i> 
+                        Kết Quả Import Học Sinh - Lớp @Model.ClassName
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <div class="p-3 bg-light rounded">
+                                <h2 class="text-primary mb-0">@Model.TotalRows</h2>
+                                <small class="text-muted">Tổng số dòng</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-success bg-opacity-10 rounded">
+                                <h2 class="text-success mb-0">@Model.SuccessCount</h2>
+                                <small class="text-muted">Thành công</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="p-3 bg-danger bg-opacity-10 rounded">
+                                <h2 class="text-danger mb-0">@Model.ErrorCount</h2>
+                                <small class="text-muted">Lỗi</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Success List -->
+            @if (Model.SuccessfulStudents.Any())
+            {
+                <div class="card shadow-sm mb-4 border-success">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-check-circle"></i> 
+                            Học Sinh Đã Thêm Thành Công (@Model.SuccessCount)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Họ và tên</th>
+                                        <th>Tên đăng nhập</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{ var index = 1; }
+                                    @foreach (var student in Model.SuccessfulStudents)
+                                    {
+                                        <tr>
+                                            <td>@index</td>
+                                            <td>@student.FullName</td>
+                                            <td><code>@student.Username</code></td>
+                                        </tr>
+                                        index++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Error List -->
+            @if (Model.Errors.Any())
+            {
+                <div class="card shadow-sm mb-4 border-danger">
+                    <div class="card-header bg-danger text-white">
+                        <h6 class="mb-0">
+                            <i class="bi bi-x-circle"></i> 
+                            Các Dòng Bị Lỗi (@Model.ErrorCount)
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-sm table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Dòng</th>
+                                        <th>Họ và tên</th>
+                                        <th>Tên đăng nhập</th>
+                                        <th>Lỗi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var error in Model.Errors)
+                                    {
+                                        <tr>
+                                            <td><span class="badge bg-secondary">@error.RowNumber</span></td>
+                                            <td>@(error.FullName ?? "-")</td>
+                                            <td>@(error.Username ?? "-")</td>
+                                            <td><span class="text-danger">@error.ErrorMessage</span></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <!-- Actions -->
+            <div class="d-flex gap-2 justify-content-center">
+                <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-primary btn-lg">
+                    <i class="bi bi-arrow-left"></i> Quay Lại Chi Tiết Lớp
+                </a>
+                <a asp-action="ImportStudents" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-success btn-lg">
+                    <i class="bi bi-upload"></i> Import Thêm
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

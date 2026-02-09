@@ -1,0 +1,99 @@
+@model HistoryGeoQuiz_PrimarySchool.ViewModels.TransferStudentViewModel
+
+@{
+    ViewData["Title"] = "Chuyển Lớp Học Sinh";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                        <i class="bi bi-arrow-left-right"></i> 
+                        Chuyển Lớp Học Sinh
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Student Info -->
+                    <div class="alert alert-info">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <i class="bi bi-person-circle fs-1"></i>
+                            </div>
+                            <div class="col">
+                                <h5 class="mb-1">@Model.StudentName</h5>
+                                <p class="mb-0">
+                                    <strong>Lớp hiện tại:</strong> 
+                                    @if (!string.IsNullOrEmpty(Model.CurrentClassName))
+                                    {
+                                        <span class="badge bg-primary">@Model.CurrentClassName</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Chưa có lớp</span>
+                                    }
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form asp-action="TransferStudent" method="post">
+                        <input type="hidden" asp-for="StudentId" />
+                        <input type="hidden" asp-for="CurrentClassRoomId" />
+
+                        <div class="mb-4">
+                            <label asp-for="TargetClassRoomId" class="form-label">
+                                <i class="bi bi-signpost-2"></i> Chọn lớp đích <span class="text-danger">*</span>
+                            </label>
+                            <select asp-for="TargetClassRoomId" class="form-select form-select-lg">
+                                <option value="">-- Chọn lớp để chuyển đến --</option>
+                                @foreach (var classItem in Model.AvailableClasses)
+                                {
+                                    <option value="@classItem.Id">@classItem.DisplayName</option>
+                                }
+                            </select>
+                            <span asp-validation-for="TargetClassRoomId" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-warning btn-lg">
+                                <i class="bi bi-arrow-left-right"></i> Xác Nhận Chuyển Lớp
+                            </button>
+                            @if (Model.CurrentClassRoomId > 0)
+                            {
+                                <a asp-action="Details" asp-route-id="@Model.CurrentClassRoomId" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Quay lại
+                                </a>
+                            }
+                            else
+                            {
+                                <a asp-action="Index" class="btn btn-outline-secondary">
+                                    <i class="bi bi-arrow-left"></i> Quay lại
+                                </a>
+                            }
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3 border-warning">
+                <div class="card-body">
+                    <h6 class="card-title text-warning">
+                        <i class="bi bi-exclamation-triangle"></i> Lưu ý
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Học sinh sẽ được chuyển sang lớp mới ngay lập tức</li>
+                        <li>Kết quả bài kiểm tra của học sinh vẫn được giữ nguyên</li>
+                        <li>Học sinh sẽ không còn xuất hiện trong danh sách lớp cũ</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

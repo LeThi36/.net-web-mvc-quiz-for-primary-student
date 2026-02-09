@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HistoryGeoQuiz_PrimarySchool.Data;
 using HistoryGeoQuiz_PrimarySchool.Models;
+using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using ClosedXML.Excel;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers
 {
@@ -19,6 +21,38 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         {
             var role = HttpContext.Session.GetString("UserRole");
             return role == "Admin";
+        }
+
+        private bool IsTeacher()
+        {
+            var role = HttpContext.Session.GetString("UserRole");
+            return role == "Teacher";
+        }
+
+        private int? GetCurrentUserId()
+        {
+            return HttpContext.Session.GetInt32("UserId");
+        }
+
+        private async Task<bool> CanManageClass(int classId)
+        {
+            if (IsAdmin()) return true;
+            if (!IsTeacher()) return false;
+
+            var userId = GetCurrentUserId();
+            if (userId == null) return false;
+
+            // Teacher can manage if they are homeroom teacher or assigned to the class
+            var canManage = await _context.ClassRooms
+                .AnyAsync(c => c.Id == classId && c.HomeroomTeacherId == userId);
+            
+            if (!canManage)
+            {
+                canManage = await _context.TeacherAssignments
+                    .AnyAsync(ta => ta.ClassRoomId == classId && ta.TeacherId == userId);
+            }
+
+            return canManage;
         }
 
         // GET: Class
@@ -140,8 +174,11 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         // GET: Class/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (!IsAdmin()) return RedirectToAction("Login", "Account");
             if (id == null) return NotFound();
+            
+            // Allow both Admin and Teachers assigned to this class
+            if (!await CanManageClass(id.Value)) 
+                return RedirectToAction("Login", "Account");
 
             var classRoom = await _context.ClassRooms
                 .Include(c => c.HomeroomTeacher)
@@ -152,14 +189,17 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
 
             if (classRoom == null) return NotFound();
 
-            // Populate Teachers list for the Assignment Dropdown
-            // Exclude teachers already assigned to avoid confusion? Or just list all.
-            var teachers = await _context.Users
-                .Where(u => u.Role == "Teacher")
-                .Select(u => new { u.Id, u.FullName })
-                .ToListAsync();
-            
-            ViewBag.Teachers = new SelectList(teachers, "Id", "FullName");
+            // Populate Teachers list for the Assignment Dropdown (Admin only)
+            ViewBag.IsAdmin = IsAdmin();
+            if (IsAdmin())
+            {
+                var teachers = await _context.Users
+                    .Where(u => u.Role == "Teacher")
+                    .Select(u => new { u.Id, u.FullName })
+                    .ToListAsync();
+                
+                ViewBag.Teachers = new SelectList(teachers, "Id", "FullName");
+            }
 
             return View(classRoom);
         }
@@ -207,6 +247,433 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         private bool ClassRoomExists(int id)
         {
             return _context.ClassRooms.Any(e => e.Id == id);
+        }
+
+        // ==================== PHASE 1: ADD STUDENTS TO CLASS ====================
+
+        // GET: Class/AddStudent/5
+        public async Task<IActionResult> AddStudent(int? id)
+        {
+            if (id == null) return NotFound();
+            if (!await CanManageClass(id.Value)) return RedirectToAction("Login", "Account");
+
+            var classRoom = await _context.ClassRooms.FindAsync(id);
+            if (classRoom == null) return NotFound();
+
+            var viewModel = new AddStudentToClassViewModel
+            {
+                ClassRoomId = classRoom.Id,
+                ClassName = classRoom.ClassName
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Class/AddStudent
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddStudent(AddStudentToClassViewModel model)
+        {
+            if (!await CanManageClass(model.ClassRoomId))
+                return RedirectToAction("Login", "Account");
+
+            var classRoom = await _context.ClassRooms.FindAsync(model.ClassRoomId);
+            if (classRoom == null) return NotFound();
+            model.ClassName = classRoom.ClassName;
+
+            if (ModelState.IsValid)
+            {
+                // Check if username already exists
+                var existingUser = await _context.Users
+                    .AnyAsync(u => u.Username.ToLower() == model.Username.ToLower());
+
+                if (existingUser)
+                {
+                    ModelState.AddModelError("Username", "Tên đăng nhập đã tồn tại");
+                    return View(model);
+                }
+
+                // Create new student account
+                var student = new User
+                {
+                    FullName = model.FullName,
+                    Username = model.Username,
+                    Password = model.Password, // In production, hash this!
+                    Role = "Student",
+                    ClassRoomId = model.ClassRoomId,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Users.Add(student);
+                await _context.SaveChangesAsync();
+
+                TempData["SuccessMessage"] = $"Đã thêm học sinh {model.FullName} vào lớp {classRoom.ClassName}";
+                return RedirectToAction(nameof(Details), new { id = model.ClassRoomId });
+            }
+
+            return View(model);
+        }
+
+        // POST: Class/RemoveStudent
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RemoveStudent(int classRoomId, int studentId)
+        {
+            if (!await CanManageClass(classRoomId))
+                return RedirectToAction("Login", "Account");
+
+            var student = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == studentId && u.ClassRoomId == classRoomId);
+
+            if (student != null)
+            {
+                // Just remove from class, don't delete the account
+                student.ClassRoomId = null;
+                await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Đã xóa học sinh {student.FullName} khỏi lớp";
+            }
+
+            return RedirectToAction(nameof(Details), new { id = classRoomId });
+        }
+
+        // GET: Class/AssignExistingStudent/5
+        public async Task<IActionResult> AssignExistingStudent(int? id)
+        {
+            if (id == null) return NotFound();
+            if (!await CanManageClass(id.Value)) return RedirectToAction("Login", "Account");
+
+            var classRoom = await _context.ClassRooms.FindAsync(id);
+            if (classRoom == null) return NotFound();
+
+            // Get students without a class
+            var availableStudents = await _context.Users
+                .Where(u => u.Role == "Student" && u.ClassRoomId == null)
+                .OrderBy(u => u.FullName)
+                .Select(u => new StudentSelectItem
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Username = u.Username
+                })
+                .ToListAsync();
+
+            var viewModel = new AssignExistingStudentViewModel
+            {
+                ClassRoomId = classRoom.Id,
+                ClassName = classRoom.ClassName,
+                AvailableStudents = availableStudents
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Class/AssignExistingStudent
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssignExistingStudent(AssignExistingStudentViewModel model)
+        {
+            if (!await CanManageClass(model.ClassRoomId))
+                return RedirectToAction("Login", "Account");
+
+            var classRoom = await _context.ClassRooms.FindAsync(model.ClassRoomId);
+            if (classRoom == null) return NotFound();
+
+            // Re-populate students for validation errors
+            model.ClassName = classRoom.ClassName;
+            model.AvailableStudents = await _context.Users
+                .Where(u => u.Role == "Student" && u.ClassRoomId == null)
+                .OrderBy(u => u.FullName)
+                .Select(u => new StudentSelectItem
+                {
+                    Id = u.Id,
+                    FullName = u.FullName,
+                    Username = u.Username
+                })
+                .ToListAsync();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Find the student
+            var student = await _context.Users
+                .FirstOrDefaultAsync(u => u.Id == model.StudentId && u.Role == "Student" && u.ClassRoomId == null);
+
+            if (student == null)
+            {
+                ModelState.AddModelError("StudentId", "Học sinh không tồn tại hoặc đã thuộc lớp khác");
+                return View(model);
+            }
+
+            // Assign to class
+            student.ClassRoomId = model.ClassRoomId;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Đã thêm học sinh {student.FullName} vào lớp {classRoom.ClassName}";
+            return RedirectToAction(nameof(Details), new { id = model.ClassRoomId });
+        }
+
+        // GET: Class/ImportStudents/5
+        public async Task<IActionResult> ImportStudents(int? id)
+        {
+            if (id == null) return NotFound();
+            if (!await CanManageClass(id.Value)) return RedirectToAction("Login", "Account");
+
+            var classRoom = await _context.ClassRooms.FindAsync(id);
+            if (classRoom == null) return NotFound();
+
+            var viewModel = new ImportStudentsViewModel
+            {
+                ClassRoomId = classRoom.Id,
+                ClassName = classRoom.ClassName
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Class/ImportStudents
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ImportStudents(ImportStudentsViewModel model)
+        {
+            if (!await CanManageClass(model.ClassRoomId))
+                return RedirectToAction("Login", "Account");
+
+            var classRoom = await _context.ClassRooms.FindAsync(model.ClassRoomId);
+            if (classRoom == null) return NotFound();
+
+            var result = new ImportStudentsResultViewModel
+            {
+                ClassRoomId = model.ClassRoomId,
+                ClassName = classRoom.ClassName
+            };
+
+            if (model.ExcelFile == null || model.ExcelFile.Length == 0)
+            {
+                ModelState.AddModelError("ExcelFile", "Vui lòng chọn file Excel");
+                return View(model);
+            }
+
+            // Check file extension
+            var extension = Path.GetExtension(model.ExcelFile.FileName).ToLower();
+            if (extension != ".xlsx")
+            {
+                ModelState.AddModelError("ExcelFile", "Chỉ hỗ trợ file Excel .xlsx");
+                return View(model);
+            }
+
+            try
+            {
+                using var stream = new MemoryStream();
+                await model.ExcelFile.CopyToAsync(stream);
+                stream.Position = 0;
+
+                using var workbook = new XLWorkbook(stream);
+                var worksheet = workbook.Worksheet(1);
+                var rows = worksheet.RowsUsed().Skip(1); // Skip header row
+
+                foreach (var row in rows)
+                {
+                    result.TotalRows++;
+                    var rowNum = row.RowNumber();
+
+                    var fullName = row.Cell(1).GetString()?.Trim();
+                    var username = row.Cell(2).GetString()?.Trim();
+                    var password = row.Cell(3).GetString()?.Trim();
+
+                    // Validate row data
+                    if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+                    {
+                        result.Errors.Add(new ImportStudentError
+                        {
+                            RowNumber = rowNum,
+                            FullName = fullName,
+                            Username = username,
+                            ErrorMessage = "Thiếu thông tin (Họ tên, Tên đăng nhập hoặc Mật khẩu)"
+                        });
+                        result.ErrorCount++;
+                        continue;
+                    }
+
+                    // Check if username already exists
+                    var existingUser = await _context.Users
+                        .AnyAsync(u => u.Username.ToLower() == username.ToLower());
+
+                    if (existingUser)
+                    {
+                        result.Errors.Add(new ImportStudentError
+                        {
+                            RowNumber = rowNum,
+                            FullName = fullName,
+                            Username = username,
+                            ErrorMessage = "Tên đăng nhập đã tồn tại"
+                        });
+                        result.ErrorCount++;
+                        continue;
+                    }
+
+                    // Create student account
+                    var student = new User
+                    {
+                        FullName = fullName,
+                        Username = username,
+                        Password = password, // In production, hash this!
+                        Role = "Student",
+                        ClassRoomId = model.ClassRoomId,
+                        CreatedAt = DateTime.UtcNow
+                    };
+
+                    _context.Users.Add(student);
+                    result.SuccessfulStudents.Add(new ImportStudentSuccess
+                    {
+                        FullName = fullName,
+                        Username = username
+                    });
+                    result.SuccessCount++;
+                }
+
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("ExcelFile", $"Lỗi đọc file Excel: {ex.Message}");
+                return View(model);
+            }
+
+            return View("ImportStudentsResult", result);
+        }
+
+        // GET: Class/DownloadStudentTemplate
+        public IActionResult DownloadStudentTemplate()
+        {
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("DanhSachHocSinh");
+
+            // Header row
+            worksheet.Cell(1, 1).Value = "Họ và tên";
+            worksheet.Cell(1, 2).Value = "Tên đăng nhập";
+            worksheet.Cell(1, 3).Value = "Mật khẩu";
+
+            // Style header
+            var headerRange = worksheet.Range(1, 1, 1, 3);
+            headerRange.Style.Font.Bold = true;
+            headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
+            headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
+
+            // Example rows
+            worksheet.Cell(2, 1).Value = "Nguyễn Văn A";
+            worksheet.Cell(2, 2).Value = "nguyenvana";
+            worksheet.Cell(2, 3).Value = "123456";
+
+            worksheet.Cell(3, 1).Value = "Trần Thị B";
+            worksheet.Cell(3, 2).Value = "tranthib";
+            worksheet.Cell(3, 3).Value = "123456";
+
+            // Auto-fit columns
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            stream.Position = 0;
+
+            return File(
+                stream.ToArray(),
+                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                "MauDanhSachHocSinh.xlsx"
+            );
+        }
+
+        // ==================== PHASE 2: TRANSFER STUDENTS BETWEEN CLASSES ====================
+
+        // GET: Class/TransferStudent/5
+        public async Task<IActionResult> TransferStudent(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var student = await _context.Users
+                .Include(u => u.ClassRoom)
+                .FirstOrDefaultAsync(u => u.Id == id && u.Role == "Student");
+
+            if (student == null) return NotFound();
+
+            // Check if user can manage the current class
+            if (student.ClassRoomId.HasValue && !await CanManageClass(student.ClassRoomId.Value))
+                return RedirectToAction("Login", "Account");
+
+            // Get all classes for dropdown (exclude current class)
+            var availableClasses = await _context.ClassRooms
+                .Where(c => c.Id != student.ClassRoomId)
+                .OrderBy(c => c.Grade)
+                .ThenBy(c => c.ClassName)
+                .Select(c => new ClassRoomSelectItem
+                {
+                    Id = c.Id,
+                    DisplayName = $"Lớp {c.ClassName} - Khối {c.Grade}"
+                })
+                .ToListAsync();
+
+            var viewModel = new TransferStudentViewModel
+            {
+                StudentId = student.Id,
+                StudentName = student.FullName,
+                CurrentClassRoomId = student.ClassRoomId ?? 0,
+                CurrentClassName = student.ClassRoom?.ClassName,
+                AvailableClasses = availableClasses
+            };
+
+            return View(viewModel);
+        }
+
+        // POST: Class/TransferStudent
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> TransferStudent(TransferStudentViewModel model)
+        {
+            var student = await _context.Users
+                .Include(u => u.ClassRoom)
+                .FirstOrDefaultAsync(u => u.Id == model.StudentId && u.Role == "Student");
+
+            if (student == null) return NotFound();
+
+            // Re-populate classes for validation errors
+            model.StudentName = student.FullName;
+            model.CurrentClassName = student.ClassRoom?.ClassName;
+            model.AvailableClasses = await _context.ClassRooms
+                .Where(c => c.Id != student.ClassRoomId)
+                .OrderBy(c => c.Grade)
+                .ThenBy(c => c.ClassName)
+                .Select(c => new ClassRoomSelectItem
+                {
+                    Id = c.Id,
+                    DisplayName = $"Lớp {c.ClassName} - Khối {c.Grade}"
+                })
+                .ToListAsync();
+
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Check if target class exists
+            var targetClass = await _context.ClassRooms.FindAsync(model.TargetClassRoomId);
+            if (targetClass == null)
+            {
+                ModelState.AddModelError("TargetClassRoomId", "Lớp đích không tồn tại");
+                return View(model);
+            }
+
+            // Store old class ID for redirect
+            int? oldClassId = student.ClassRoomId;
+
+            // Transfer student
+            student.ClassRoomId = model.TargetClassRoomId;
+            await _context.SaveChangesAsync();
+
+            TempData["SuccessMessage"] = $"Đã chuyển học sinh {student.FullName} sang lớp {targetClass.ClassName}";
+
+            // Redirect to the new class details
+            return RedirectToAction(nameof(Details), new { id = model.TargetClassRoomId });
         }
     }
 }

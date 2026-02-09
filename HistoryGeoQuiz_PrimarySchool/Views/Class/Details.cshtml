@@ -29,7 +29,9 @@
 
         <!-- Assignments & Students -->
         <div class="col-md-8">
-            <!-- Teachers Assignments -->
+            <!-- Teachers Assignments (Admin Only) -->
+            @if (ViewBag.IsAdmin == true)
+            {
             <div class="card shadow-sm mb-4">
                 <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
                     <h5 class="mb-0"><i class="bi bi-person-video3"></i> Phân Công Giáo Viên</h5>
@@ -126,41 +128,91 @@
                     }
                 </div>
             </div>
+            }
 
             <!-- Student List -->
             <div class="card shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0"><i class="bi bi-people"></i> Danh Sách Học Sinh</h5>
+                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0"><i class="bi bi-people"></i> Danh Sách Học Sinh (@Model.Students.Count)</h5>
+                    <div class="d-flex gap-1 flex-wrap">
+                        <a asp-action="AssignExistingStudent" asp-route-id="@Model.Id" class="btn btn-sm btn-info text-white">
+                            <i class="bi bi-person-check"></i> HS có sẵn
+                        </a>
+                        <a asp-action="AddStudent" asp-route-id="@Model.Id" class="btn btn-sm btn-light text-primary fw-bold">
+                            <i class="bi bi-person-plus"></i> Thêm mới
+                        </a>
+                        <a asp-action="ImportStudents" asp-route-id="@Model.Id" class="btn btn-sm btn-success">
+                            <i class="bi bi-file-earmark-excel"></i> Import
+                        </a>
+                    </div>
                 </div>
                 <div class="card-body">
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <i class="bi bi-check-circle"></i> @TempData["SuccessMessage"]
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                    }
+
                     @if (Model.Students.Any())
                     {
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Họ Tên</th>
-                                    <th>Username</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var student in Model.Students)
-                                {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-light">
                                     <tr>
-                                        <td>@student.Id</td>
-                                        <td>@student.FullName</td>
-                                        <td>@student.Username</td>
+                                        <th style="width: 50px;">#</th>
+                                        <th>Họ Tên</th>
+                                        <th>Username</th>
+                                        <th class="text-end" style="width: 180px;">Thao tác</th>
                                     </tr>
-                                }
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    @{ var stt = 1; }
+                                    @foreach (var student in Model.Students.OrderBy(s => s.FullName))
+                                    {
+                                        <tr>
+                                            <td>@stt</td>
+                                            <td>
+                                                <i class="bi bi-person-fill text-primary"></i>
+                                                @student.FullName
+                                            </td>
+                                            <td><code>@student.Username</code></td>
+                                            <td class="text-end">
+                                                <a asp-action="TransferStudent" asp-route-id="@student.Id" 
+                                                   class="btn btn-sm btn-outline-warning" title="Chuyển lớp">
+                                                    <i class="bi bi-arrow-left-right"></i>
+                                                </a>
+                                                <form asp-action="RemoveStudent" method="post" class="d-inline">
+                                                    <input type="hidden" name="classRoomId" value="@Model.Id" />
+                                                    <input type="hidden" name="studentId" value="@student.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                            onclick="return confirm('Xóa học sinh @student.FullName khỏi lớp?');"
+                                                            title="Xóa khỏi lớp">
+                                                        <i class="bi bi-x-lg"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                        stt++;
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     }
                     else
                     {
-                        <p class="text-muted text-center py-3">Danh sách trống.</p>
+                        <div class="text-center py-5">
+                            <i class="bi bi-people text-muted" style="font-size: 3rem;"></i>
+                            <p class="text-muted mt-2">Chưa có học sinh trong lớp</p>
+                            <a asp-action="AddStudent" asp-route-id="@Model.Id" class="btn btn-primary">
+                                <i class="bi bi-person-plus"></i> Thêm Học Sinh Đầu Tiên
+                            </a>
+                        </div>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+

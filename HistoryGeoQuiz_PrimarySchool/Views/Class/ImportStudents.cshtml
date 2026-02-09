@@ -1,0 +1,97 @@
+@model HistoryGeoQuiz_PrimarySchool.ViewModels.ImportStudentsViewModel
+
+@{
+    ViewData["Title"] = "Import Học Sinh";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-file-earmark-excel"></i> 
+                        Import Học Sinh Vào Lớp @Model.ClassName
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- Download Template Section -->
+                    <div class="alert alert-info d-flex align-items-center mb-4">
+                        <i class="bi bi-download fs-4 me-3"></i>
+                        <div class="flex-grow-1">
+                            <strong>Bước 1:</strong> Tải file mẫu Excel và điền thông tin học sinh
+                        </div>
+                        <a asp-action="DownloadStudentTemplate" class="btn btn-info text-white">
+                            <i class="bi bi-file-earmark-arrow-down"></i> Tải File Mẫu
+                        </a>
+                    </div>
+
+                    <!-- Upload Section -->
+                    <form asp-action="ImportStudents" method="post" enctype="multipart/form-data">
+                        <input type="hidden" asp-for="ClassRoomId" />
+                        <input type="hidden" asp-for="ClassName" />
+
+                        <div class="mb-4">
+                            <label asp-for="ExcelFile" class="form-label">
+                                <strong>Bước 2:</strong> Chọn file Excel đã điền thông tin <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="ExcelFile" type="file" class="form-control form-control-lg" accept=".xlsx" />
+                            <span asp-validation-for="ExcelFile" class="text-danger small"></span>
+                            <div class="form-text">Chỉ hỗ trợ file Excel (.xlsx)</div>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-upload"></i> Import Học Sinh
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Instructions Card -->
+            <div class="card mt-3 border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h6 class="mb-0"><i class="bi bi-exclamation-triangle"></i> Hướng Dẫn</h6>
+                </div>
+                <div class="card-body">
+                    <h6>Cấu trúc file Excel:</h6>
+                    <table class="table table-bordered table-sm">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Cột A</th>
+                                <th>Cột B</th>
+                                <th>Cột C</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Họ và tên</strong></td>
+                                <td><strong>Tên đăng nhập</strong></td>
+                                <td><strong>Mật khẩu</strong></td>
+                            </tr>
+                            <tr class="text-muted">
+                                <td>Nguyễn Văn A</td>
+                                <td>nguyenvana</td>
+                                <td>123456</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <ul class="mb-0 small">
+                        <li>Dòng đầu tiên là tiêu đề, dữ liệu bắt đầu từ dòng 2</li>
+                        <li>Tên đăng nhập không được trùng với tài khoản đã có</li>
+                        <li>Mỗi học sinh sẽ được tạo tài khoản tự động</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,86 @@
+@model HistoryGeoQuiz_PrimarySchool.ViewModels.AddStudentToClassViewModel
+
+@{
+    ViewData["Title"] = "Thêm Học Sinh";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-person-plus"></i> 
+                        Thêm Học Sinh Vào Lớp @Model.ClassName
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <form asp-action="AddStudent" method="post">
+                        <input type="hidden" asp-for="ClassRoomId" />
+                        <input type="hidden" asp-for="ClassName" />
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label">
+                                <i class="bi bi-person"></i> Họ và tên <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="FullName" class="form-control" placeholder="Nguyễn Văn A" />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Username" class="form-label">
+                                <i class="bi bi-person-badge"></i> Tên đăng nhập <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Username" class="form-control" placeholder="nguyenvana" />
+                            <span asp-validation-for="Username" class="text-danger small"></span>
+                            <div class="form-text">Chỉ sử dụng chữ cái, số và dấu gạch dưới</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Password" class="form-label">
+                                <i class="bi bi-key"></i> Mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="Password" class="form-control" placeholder="••••••" />
+                            <span asp-validation-for="Password" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="ConfirmPassword" class="form-label">
+                                <i class="bi bi-key-fill"></i> Xác nhận mật khẩu <span class="text-danger">*</span>
+                            </label>
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••" />
+                            <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle"></i> Thêm Học Sinh
+                            </button>
+                            <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Quay lại
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3 border-info">
+                <div class="card-body">
+                    <h6 class="card-title text-info">
+                        <i class="bi bi-info-circle"></i> Lưu ý
+                    </h6>
+                    <ul class="mb-0 small">
+                        <li>Tài khoản học sinh sẽ được tạo tự động với vai trò "Học sinh"</li>
+                        <li>Học sinh sẽ sử dụng tên đăng nhập và mật khẩu này để đăng nhập hệ thống</li>
+                        <li>Hãy ghi lại thông tin tài khoản để cung cấp cho học sinh</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -41,9 +41,14 @@
                 </h1>
                 <p class="dashboard-subtitle mb-0">Quản lý các bài học và câu hỏi trắc nghiệm</p>
             </div>
-            <a asp-action="CreateLesson" class="btn btn-lg" style="background: white; color: var(--primary-orange);">
-                <i class="bi bi-plus-circle"></i> Tạo Bài Học Mới
-            </a>
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="MyClasses" class="btn btn-lg btn-outline-light">
+                    <i class="bi bi-people"></i> Quản Lý Lớp
+                </a>
+                <a asp-action="CreateLesson" class="btn btn-lg" style="background: white; color: var(--primary-orange);">
+                    <i class="bi bi-plus-circle"></i> Tạo Bài Học Mới
+                </a>
+            </div>
         </div>
     </div>
     

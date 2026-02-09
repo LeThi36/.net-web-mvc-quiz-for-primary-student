@@ -1,0 +1,135 @@
+@model List<HistoryGeoQuiz_PrimarySchool.Models.TeacherAssignment>
+
+@{
+    ViewData["Title"] = "Quản Lý Lớp Học";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <!-- Header -->
+    <div class="dashboard-header mb-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div>
+                <h1 class="dashboard-title">
+                    <i class="bi bi-people me-2"></i>Quản Lý Lớp Học
+                </h1>
+                <p class="dashboard-subtitle mb-0">Xem và quản lý học sinh trong các lớp được phân công</p>
+            </div>
+            <a asp-action="Index" class="btn btn-outline-primary">
+                <i class="bi bi-arrow-left"></i> Về Trang Quản Lý
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        // Group by ClassRoom
+        var classesList = Model.GroupBy(ta => ta.ClassRoom)
+            .Select(g => g.Key)
+            .Where(c => c != null)
+            .OrderBy(c => c!.Grade)
+            .ThenBy(c => c!.ClassName)
+            .ToList();
+
+        <div class="row g-4">
+            @foreach (var classRoom in classesList)
+            {
+                if (classRoom == null) continue;
+                
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm border-0">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-building"></i> Lớp @classRoom.ClassName
+                            </h5>
+                            <small>Khối @classRoom.Grade</small>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between mb-3">
+                                <span>
+                                    <i class="bi bi-people-fill text-primary"></i>
+                                    <strong>@classRoom.Students.Count</strong> học sinh
+                                </span>
+                                <span class="badge bg-secondary">
+                                    @{
+                                        var subjects = Model.Where(ta => ta.ClassRoomId == classRoom.Id)
+                                            .Select(ta => ta.Subject)
+                                            .Distinct()
+                                            .ToList();
+                                    }
+                                    @subjects.Count môn
+                                </span>
+                            </div>
+
+                            @if (classRoom.Students.Any())
+                            {
+                                <div class="mb-3" style="max-height: 150px; overflow-y: auto;">
+                                    <small class="text-muted">Danh sách học sinh:</small>
+                                    <ul class="list-group list-group-flush small">
+                                        @foreach (var student in classRoom.Students.Take(5))
+                                        {
+                                            <li class="list-group-item py-1 px-0">
+                                                <i class="bi bi-person text-primary"></i> @student.FullName
+                                            </li>
+                                        }
+                                        @if (classRoom.Students.Count > 5)
+                                        {
+                                            <li class="list-group-item py-1 px-0 text-muted">
+                                                ... và @(classRoom.Students.Count - 5) học sinh khác
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-info-circle"></i> Chưa có học sinh
+                                </p>
+                            }
+                        </div>
+                        <div class="card-footer bg-light">
+                            <div class="d-flex gap-2 flex-wrap">
+                                <a asp-controller="Class" asp-action="AssignExistingStudent" asp-route-id="@classRoom.Id" 
+                                   class="btn btn-info btn-sm text-white">
+                                    <i class="bi bi-person-check"></i> HS có sẵn
+                                </a>
+                                <a asp-controller="Class" asp-action="AddStudent" asp-route-id="@classRoom.Id" 
+                                   class="btn btn-primary btn-sm">
+                                    <i class="bi bi-person-plus"></i> Thêm mới
+                                </a>
+                                <a asp-controller="Class" asp-action="ImportStudents" asp-route-id="@classRoom.Id" 
+                                   class="btn btn-success btn-sm">
+                                    <i class="bi bi-file-earmark-excel"></i> Import
+                                </a>
+                                <a asp-controller="Class" asp-action="Details" asp-route-id="@classRoom.Id" 
+                                   class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-eye"></i> Chi tiết
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state bg-white rounded-4 p-5 text-center">
+            <i class="bi bi-building-x" style="font-size: 5rem; color: #6c757d;"></i>
+            <h3 class="mt-3">Chưa được phân công lớp nào!</h3>
+            <p class="text-muted mb-4">Vui lòng liên hệ Admin để được phân công dạy lớp.</p>
+            <a asp-action="Index" class="btn btn-primary btn-lg">
+                <i class="bi bi-arrow-left"></i> Về Trang Quản Lý
+            </a>
+        </div>
+    }
+</div>
