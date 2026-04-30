@@ -3,16 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class TestResult
+    public class TestResult : BaseEntity
     {
-        public int Id { get; set; }
-
-        public int StudentId { get; set; }
+        public Guid StudentId { get; set; }
 
         [ForeignKey("StudentId")]
         public virtual User? Student { get; set; }
 
-        public int LessonId { get; set; }
+        public Guid LessonId { get; set; }
 
         [ForeignKey("LessonId")]
         public virtual Lesson? Lesson { get; set; }

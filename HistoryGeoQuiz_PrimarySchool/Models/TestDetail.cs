@@ -3,21 +3,19 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class TestDetail
+    public class TestDetail : BaseEntity
     {
-        public int Id { get; set; }
-
-        public int TestResultId { get; set; }
+        public Guid TestResultId { get; set; }
 
         [ForeignKey("TestResultId")]
         public virtual TestResult? TestResult { get; set; }
 
-        public int QuestionId { get; set; }
+        public Guid QuestionId { get; set; }
 
         [ForeignKey("QuestionId")]
         public virtual Question? Question { get; set; }
 
-        public int? SelectedAnswerId { get; set; }
+        public Guid? SelectedAnswerId { get; set; }
 
         [ForeignKey("SelectedAnswerId")]
         public virtual Answer? SelectedAnswer { get; set; }

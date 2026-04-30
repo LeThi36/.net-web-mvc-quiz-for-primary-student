@@ -3,11 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class Answer
+    public class Answer : BaseEntity
     {
-        public int Id { get; set; }
-
-        public int QuestionId { get; set; }
+        public Guid QuestionId { get; set; }
 
         [ForeignKey("QuestionId")]
         public virtual Question? Question { get; set; }

@@ -3,11 +3,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class Question
+    public class Question : BaseEntity
     {
-        public int Id { get; set; }
-
-        public int LessonId { get; set; }
+        public Guid LessonId { get; set; }
 
         [ForeignKey("LessonId")]
         public virtual Lesson? Lesson { get; set; }
@@ -21,8 +19,6 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
 
         [Display(Name = "Thứ tự câu hỏi")]
         public int OrderIndex { get; set; } = 0;
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public virtual ICollection<Answer> Answers { get; set; } = new List<Answer>();

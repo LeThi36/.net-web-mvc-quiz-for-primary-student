@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class Lesson
+    public class Lesson : BaseEntity
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Vui lòng nhập tên bài học")]
         [Display(Name = "Tên bài học")]
         [StringLength(200)]
@@ -23,17 +21,15 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
         [Display(Name = "Số thứ tự bài")]
         public int LessonNumber { get; set; } = 1;
 
-        public int CreatedByUserId { get; set; }
+        public Guid CreatedByUserId { get; set; }
 
         [ForeignKey("CreatedByUserId")]
         public virtual User? CreatedByUser { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-
         public bool IsActive { get; set; } = true;
 
         [Display(Name = "Lớp học")]
-        public int? ClassRoomId { get; set; }
+        public Guid? ClassRoomId { get; set; }
 
         [ForeignKey("ClassRoomId")]
         public virtual ClassRoom? ClassRoom { get; set; }

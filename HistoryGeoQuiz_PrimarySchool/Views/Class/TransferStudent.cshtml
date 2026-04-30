@@ -61,7 +61,7 @@
                             <button type="submit" class="btn btn-warning btn-lg">
                                 <i class="bi bi-arrow-left-right"></i> Xác Nhận Chuyển Lớp
                             </button>
-                            @if (Model.CurrentClassRoomId > 0)
+                            @if (Model.CurrentClassRoomId != Guid.Empty)
                             {
                                 <a asp-action="Details" asp-route-id="@Model.CurrentClassRoomId" class="btn btn-outline-secondary">
                                     <i class="bi bi-arrow-left"></i> Quay lại

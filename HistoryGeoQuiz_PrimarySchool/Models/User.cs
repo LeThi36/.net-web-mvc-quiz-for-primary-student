@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HistoryGeoQuiz_PrimarySchool.Enums;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class User
+    public class User : BaseEntity
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Vui lòng nhập tên đăng nhập")]
         [Display(Name = "Tên đăng nhập")]
         [StringLength(50)]
@@ -24,13 +23,11 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
 
         [Required]
         [Display(Name = "Vai trò")]
-        public string Role { get; set; } = "Student"; // "Teacher" or "Student"
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public UserRole Role { get; set; } = HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Student;
 
         // For Students: Which class are they in?
         [Display(Name = "Lớp")]
-        public int? ClassRoomId { get; set; }
+        public Guid? ClassRoomId { get; set; }
 
         [ForeignKey("ClassRoomId")]
         public virtual ClassRoom? ClassRoom { get; set; }
@@ -39,7 +36,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
         public virtual ICollection<Lesson> CreatedLessons { get; set; } = new List<Lesson>();
         public virtual ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
         
-        // Fore Teacher: Assignments
+        // For Teacher: Assignments
         public virtual ICollection<TeacherAssignment> TeacherAssignments { get; set; } = new List<TeacherAssignment>();
     }
 }

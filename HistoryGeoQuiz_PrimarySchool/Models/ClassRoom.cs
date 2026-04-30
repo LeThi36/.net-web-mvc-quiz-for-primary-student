@@ -3,10 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
-    public class ClassRoom
+    public class ClassRoom : BaseEntity
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Vui lòng nhập tên lớp")]
         [Display(Name = "Tên lớp")]
         [StringLength(50)]
@@ -16,12 +14,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
         public int Grade { get; set; } // 1, 2, 3, 4, 5
 
         // Foreign Key for Homeroom Teacher (optional provided at creation, can be set later)
-        public int? HomeroomTeacherId { get; set; }
+        public Guid? HomeroomTeacherId { get; set; }
 
         [ForeignKey("HomeroomTeacherId")]
         public virtual User? HomeroomTeacher { get; set; }
-
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation properties
         public virtual ICollection<User> Students { get; set; } = new List<User>();

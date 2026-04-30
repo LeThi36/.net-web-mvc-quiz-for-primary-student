@@ -31,7 +31,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Data
                 entity.Property(e => e.Username).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Password).IsRequired();
                 entity.Property(e => e.FullName).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.Role).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Role)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasConversion<string>();
 
                 // Student Key to Class
                 entity.HasOne(e => e.ClassRoom)
@@ -149,6 +152,20 @@ namespace HistoryGeoQuiz_PrimarySchool.Data
                     .HasForeignKey(e => e.SelectedAnswerId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            // ============================================
+            // Global Query Filters — Soft Delete
+            // All queries automatically filter out deleted records.
+            // Use .IgnoreQueryFilters() when you need to include deleted records.
+            // ============================================
+            modelBuilder.Entity<Lesson>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Question>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<Answer>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<User>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<ClassRoom>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<TestResult>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<TeacherAssignment>().HasQueryFilter(e => !e.IsDeleted);
+            modelBuilder.Entity<TestDetail>().HasQueryFilter(e => !e.IsDeleted);
         }
     }
 }

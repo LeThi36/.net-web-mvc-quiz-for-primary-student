@@ -32,10 +32,10 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    @if (Context.Session.GetInt32("UserId") != null)
+                    @if (Context.Session.GetString(SessionKeys.UserId) != null)
                     {
-                        var role = Context.Session.GetString("UserRole");
-                        var userName = Context.Session.GetString("UserName");
+                        var role = Context.Session.GetString(SessionKeys.UserRole);
+                        var userName = Context.Session.GetString(SessionKeys.UserName);
                         
                         <li class="nav-item">
                             <span class="nav-link">
@@ -44,15 +44,20 @@
                             </span>
                         </li>
                         
-                        @if (role == "Admin")
+                        @if (role == nameof(HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Admin))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Class" asp-action="Index">
                                     <i class="bi bi-gear me-1"></i>Quản lý Lớp
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="User" asp-action="Index">
+                                    <i class="bi bi-person-lines-fill me-1"></i>Quản lý Giáo Viên
+                                </a>
+                            </li>
                         }
-                        else if (role == "Teacher")
+                        else if (role == nameof(HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Teacher))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Teacher" asp-action="Index">
@@ -75,9 +80,13 @@
                         }
                         
                         <li class="nav-item">
-                            <a class="nav-link btn-logout" asp-controller="Account" asp-action="Logout">
-                                <i class="bi bi-box-arrow-right me-1"></i>Đăng xuất
-                            </a>
+                            @* [S12] FIX: Logout must be POST to prevent CSRF *@
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="nav-link btn-logout border-0 bg-transparent">
+                                    <i class="bi bi-box-arrow-right me-1"></i>Đăng xuất
+                                </button>
+                            </form>
                         </li>
                     }
                     else

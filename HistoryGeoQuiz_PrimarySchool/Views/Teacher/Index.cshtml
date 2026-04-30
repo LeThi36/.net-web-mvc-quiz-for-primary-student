@@ -52,18 +52,18 @@
         </div>
     </div>
     
-    @if (TempData["SuccessMessage"] != null)
+    @if (TempData[TempDataKeys.SuccessMessage] != null)
     {
         <div class="alert alert-success alert-dismissible fade show" role="alert">
-            <i class="bi bi-check-circle me-2"></i>@TempData["SuccessMessage"]
+            <i class="bi bi-check-circle me-2"></i>@TempData[TempDataKeys.SuccessMessage]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }
     
-    @if (TempData["ErrorMessage"] != null)
+    @if (TempData[TempDataKeys.ErrorMessage] != null)
     {
         <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <i class="bi bi-exclamation-triangle me-2"></i>@TempData["ErrorMessage"]
+            <i class="bi bi-exclamation-triangle me-2"></i>@TempData[TempDataKeys.ErrorMessage]
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     }

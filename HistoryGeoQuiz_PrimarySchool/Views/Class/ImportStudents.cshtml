@@ -16,15 +16,9 @@
                     </h5>
                 </div>
                 <div class="card-body">
-                    <!-- Download Template Section -->
-                    <div class="alert alert-info d-flex align-items-center mb-4">
-                        <i class="bi bi-download fs-4 me-3"></i>
-                        <div class="flex-grow-1">
-                            <strong>Bước 1:</strong> Tải file mẫu Excel và điền thông tin học sinh
-                        </div>
-                        <a asp-action="DownloadStudentTemplate" class="btn btn-info text-white">
-                            <i class="bi bi-file-earmark-arrow-down"></i> Tải File Mẫu
-                        </a>
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> 
+                        <strong>Lưu ý:</strong> Vui lòng tải file mẫu và nhập dữ liệu theo đúng định dạng trước khi tải lên. Mỗi học sinh sẽ được tạo tài khoản tự động và gán vào lớp này.
                     </div>
 
                     <!-- Upload Section -->
@@ -41,13 +35,18 @@
                             <div class="form-text">Chỉ hỗ trợ file Excel (.xlsx)</div>
                         </div>
 
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="bi bi-upload"></i> Import Học Sinh
-                            </button>
+                        <div class="d-flex justify-content-between align-items-center mt-4">
                             <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
                                 <i class="bi bi-arrow-left"></i> Quay lại
                             </a>
+                            <div>
+                                <a asp-action="DownloadStudentTemplate" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-download"></i> Tải File mẫu Excel
+                                </a>
+                                <button type="submit" class="btn btn-success">
+                                    <i class="bi bi-upload"></i> Tải Lên & Xử Lý
+                                </button>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -84,6 +83,7 @@
                     <ul class="mb-0 small">
                         <li>Dòng đầu tiên là tiêu đề, dữ liệu bắt đầu từ dòng 2</li>
                         <li>Tên đăng nhập không được trùng với tài khoản đã có</li>
+                        <li><strong>Trường hợp trùng họ tên:</strong> Hãy đặt <strong><em>Tên đăng nhập</em></strong> khác nhau (VD: nguyenvana1, nguyenvana2...) để phân biệt</li>
                         <li>Mỗi học sinh sẽ được tạo tài khoản tự động</li>
                     </ul>
                 </div>
