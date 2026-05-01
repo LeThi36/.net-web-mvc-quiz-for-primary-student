@@ -11,5 +11,6 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Interfaces
         Task<bool> UpdateLessonAsync(Guid lessonId, CreateLessonViewModel model, Guid teacherId);
         Task<bool> DeleteLessonAsync(Guid lessonId, Guid teacherId);
         Task<Lesson?> GetLessonDetailWithQuestionsAsync(Guid lessonId, Guid teacherId);
+        Task<bool> UpdateLessonConfigAsync(Guid lessonId, int? timeLimit, int? excellent, int? good, Guid teacherId);
     }
 }

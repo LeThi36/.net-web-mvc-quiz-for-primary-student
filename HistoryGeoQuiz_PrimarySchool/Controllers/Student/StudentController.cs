@@ -42,9 +42,12 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         // POST: Submit Quiz
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitQuiz(Guid lessonId, Dictionary<string, Guid> answers)
+        public async Task<IActionResult> SubmitQuiz(Guid lessonId, Dictionary<string, Guid> answers, DateTime startTime)
         {
-            var testResult = await _testService.SubmitQuizAsync(lessonId, answers, GetCurrentUserId());
+            var timeTakenSeconds = (int)(DateTime.UtcNow - startTime).TotalSeconds;
+            if (timeTakenSeconds < 0) timeTakenSeconds = 0;
+
+            var testResult = await _testService.SubmitQuizAsync(lessonId, answers, GetCurrentUserId(), timeTakenSeconds);
             return RedirectToAction("Result", new { testResultId = testResult.Id });
         }
 

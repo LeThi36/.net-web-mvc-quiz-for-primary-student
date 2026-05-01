@@ -46,10 +46,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Auth
                 .OrderBy(u => u.FullName)
                 .ToListAsync();
 
-        // P2: AsNoTracking for read-only student info
+        // P2: Tracking enabled for student info to support navigation property fix-up
         public async Task<User?> GetStudentWithClassInfoAsync(Guid userId)
             => await _dbSet
-                .AsNoTracking()
+                .Include(u => u.Avatar)
                 .Include(u => u.ClassRoom)
                     .ThenInclude(c => c!.HomeroomTeacher)
                 .FirstOrDefaultAsync(u => u.Id == userId);

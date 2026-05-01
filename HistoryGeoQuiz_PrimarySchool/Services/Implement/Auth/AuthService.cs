@@ -35,11 +35,11 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth
         }
 
         public async Task<(bool Success, string? Error)> RegisterAsync(
-            string username, string password, string fullName, UserRole role)
+            string username, string password, string fullName, UserRole role, Gender gender)
         {
             // Business rule: validate role
             if (!UserRoleExtensions.AllowedRegistrationRoles.Contains(role))
-                return (false, "Vai trò không hợp lệ! Chỉ được chọn Học sinh hoặc Giáo viên.");
+                return (false, "Vai trò không hợp lệ! Chỉ được chọn Học sinh.");
 
             // Business rule: unique username
             if (await _userRepo.UsernameExistsAsync(username))
@@ -54,6 +54,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth
                 Password = hashedPassword,
                 FullName = fullName,
                 Role = role,
+                Gender = gender,
                 CreatedAt = DateTime.UtcNow
             };
 

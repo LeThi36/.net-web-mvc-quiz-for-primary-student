@@ -86,7 +86,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Admin
                 var hashedPassword = BCrypt.Net.BCrypt.HashPassword(password);
                 var teacher = new User
                 {
-                    FullName = HttpUtility.HtmlEncode(fullName),
+                    FullName = fullName,
                     Username = username, // Username kept as-is for login matching
                     Password = hashedPassword,
                     Role = UserRole.Teacher,
@@ -122,7 +122,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Admin
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(model.Password);
             var teacher = new User
             {
-                FullName = System.Web.HttpUtility.HtmlEncode(model.FullName),
+                FullName = model.FullName,
                 Username = model.Username,
                 Password = hashedPassword,
                 Role = UserRole.Teacher,

@@ -134,6 +134,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
+                    b.Property<int?>("TimeLimitMinutes")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -146,6 +149,45 @@ namespace HistoryGeoQuiz_PrimarySchool.Migrations
                     b.HasIndex("CreatedByUserId");
 
                     b.ToTable("Lessons");
+                });
+
+            modelBuilder.Entity("HistoryGeoQuiz_PrimarySchool.Models.Media", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ContentType")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("FileName")
+                        .HasColumnType("text");
+
+                    b.Property<long>("FileSize")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ProviderPublicId")
+                        .HasColumnType("text");
+
+                    b.Property<Guid?>("UploadedByUserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Medias");
                 });
 
             modelBuilder.Entity("HistoryGeoQuiz_PrimarySchool.Models.Question", b =>
@@ -312,6 +354,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("AvatarId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("ClassRoomId")
                         .HasColumnType("uuid");
 
@@ -325,6 +370,11 @@ namespace HistoryGeoQuiz_PrimarySchool.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -344,6 +394,8 @@ namespace HistoryGeoQuiz_PrimarySchool.Migrations
                         .HasColumnType("character varying(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AvatarId");
 
                     b.HasIndex("ClassRoomId");
 
@@ -469,10 +521,16 @@ namespace HistoryGeoQuiz_PrimarySchool.Migrations
 
             modelBuilder.Entity("HistoryGeoQuiz_PrimarySchool.Models.User", b =>
                 {
+                    b.HasOne("HistoryGeoQuiz_PrimarySchool.Models.Media", "Avatar")
+                        .WithMany()
+                        .HasForeignKey("AvatarId");
+
                     b.HasOne("HistoryGeoQuiz_PrimarySchool.Models.ClassRoom", "ClassRoom")
                         .WithMany("Students")
                         .HasForeignKey("ClassRoomId")
                         .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Avatar");
 
                     b.Navigation("ClassRoom");
                 });

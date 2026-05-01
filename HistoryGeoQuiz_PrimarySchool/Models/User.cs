@@ -25,6 +25,15 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
         [Display(Name = "Vai trò")]
         public UserRole Role { get; set; } = HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Student;
 
+        [Display(Name = "Ảnh đại diện")]
+        public Guid? AvatarId { get; set; }
+
+        [ForeignKey("AvatarId")]
+        public virtual Media? Avatar { get; set; }
+
+        [Display(Name = "Giới tính")]
+        public Gender Gender { get; set; }
+
         // For Students: Which class are they in?
         [Display(Name = "Lớp")]
         public Guid? ClassRoomId { get; set; }

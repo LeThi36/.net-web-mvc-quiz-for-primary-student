@@ -31,10 +31,20 @@
             </h2>
             <h1 class="mb-2">@Model.LessonTitle</h1>
             <p class="text-muted">Chọn đáp án đúng cho mỗi câu hỏi bên dưới</p>
+
+            @if (Model.TimeLimitMinutes.HasValue)
+            {
+                <div class="timer-badge bg-white shadow-sm border border-primary px-4 py-2 rounded-pill d-inline-flex align-items-center gap-2 mb-3">
+                    <i class="bi bi-alarm-fill text-primary"></i>
+                    <span class="fw-bold text-dark">Thời gian còn lại: </span>
+                    <span id="countdown" class="h4 mb-0 text-primary fw-black" data-minutes="@Model.TimeLimitMinutes">--:--</span>
+                </div>
+            }
         </div>
         
         <form asp-action="SubmitQuiz" method="post" id="quizForm">
             <input type="hidden" name="lessonId" value="@Model.LessonId" />
+            <input type="hidden" name="startTime" value="@DateTime.UtcNow.ToString("O")" />
             
             @foreach (var question in Model.Questions)
             {
@@ -91,11 +101,41 @@
             const totalQuestions = @Model.Questions.Count;
             const answeredQuestions = document.querySelectorAll('input[type="radio"]:checked').length;
             
-            if (answeredQuestions < totalQuestions) {
+            if (answeredQuestions < totalQuestions && !window.autoSubmit) {
                 if (!confirm(`Bạn mới trả lời ${answeredQuestions}/${totalQuestions} câu. Bạn có muốn nộp bài không?`)) {
                     e.preventDefault();
                 }
             }
         });
+
+        // Countdown Timer Logic
+        const countdownEl = document.getElementById('countdown');
+        if (countdownEl) {
+            let totalSeconds = parseInt(countdownEl.dataset.minutes) * 60;
+            
+            function updateTimer() {
+                const minutes = Math.floor(totalSeconds / 60);
+                const seconds = totalSeconds % 60;
+                
+                countdownEl.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (totalSeconds <= 0) {
+                    clearInterval(timerInterval);
+                    window.autoSubmit = true;
+                    alert('Đã hết thời gian làm bài! Hệ thống sẽ tự động nộp bài.');
+                    document.getElementById('quizForm').submit();
+                }
+                
+                if (totalSeconds < 30) {
+                    countdownEl.classList.add('text-danger');
+                    countdownEl.classList.remove('text-primary');
+                }
+                
+                totalSeconds--;
+            }
+            
+            updateTimer();
+            const timerInterval = setInterval(updateTimer, 1000);
+        }
     </script>
 }

@@ -44,7 +44,8 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
                 IsActive = true,
                 ClassRoomId = model.ClassRoomId,
                 QuestionCountForExcellent = model.QuestionCountForExcellent,
-                QuestionCountForGood = model.QuestionCountForGood
+                QuestionCountForGood = model.QuestionCountForGood,
+                TimeLimitMinutes = model.TimeLimitMinutes
             };
 
             await _lessonRepo.AddAsync(lesson);
@@ -67,6 +68,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
             lesson.ClassRoomId = model.ClassRoomId;
             lesson.QuestionCountForExcellent = model.QuestionCountForExcellent;
             lesson.QuestionCountForGood = model.QuestionCountForGood;
+            lesson.TimeLimitMinutes = model.TimeLimitMinutes;
 
             await _lessonRepo.SaveChangesAsync();
             return true;
@@ -91,6 +93,19 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
 
         public async Task<Lesson?> GetLessonDetailWithQuestionsAsync(Guid lessonId, Guid teacherId)
             => await _lessonRepo.GetWithQuestionsAndAnswersAsync(lessonId, teacherId);
+
+        public async Task<bool> UpdateLessonConfigAsync(Guid lessonId, int? timeLimit, int? excellent, int? good, Guid teacherId)
+        {
+            var lesson = await _lessonRepo.GetByIdForTeacherAsync(lessonId, teacherId);
+            if (lesson == null) return false;
+
+            lesson.TimeLimitMinutes = timeLimit;
+            lesson.QuestionCountForExcellent = excellent;
+            lesson.QuestionCountForGood = good;
+
+            await _lessonRepo.SaveChangesAsync();
+            return true;
+        }
     }
 }
 

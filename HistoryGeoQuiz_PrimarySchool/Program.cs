@@ -9,6 +9,9 @@ using HistoryGeoQuiz_PrimarySchool.Services.Implement.Student;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Auth;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Student;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Teacher;
+using HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Core;
+using HistoryGeoQuiz_PrimarySchool.Options;
+using HistoryGeoQuiz_PrimarySchool.Services.Implement.Storage;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +24,10 @@ builder.Services.AddControllersWithViews();
 // P5: Register MemoryCache for dropdown data caching (10 min)
 builder.Services.AddMemoryCache();
 
+// Configure Options
+builder.Services.Configure<CloudinaryOptions>(builder.Configuration.GetSection("Cloudinary"));
+builder.Services.Configure<StorageOptions>(builder.Configuration.GetSection("Storage"));
+
 // Configure Entity Framework with PostgreSQL (Supabase)
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -30,6 +37,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 builder.Services.AddScoped<IQuestionRepository, QuestionRepository>();
 builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
 // Register application services (Business Logic Layer)
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -37,6 +45,12 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<IQuestionService, QuestionService>();
 builder.Services.AddScoped<ITestService, TestService>();
+builder.Services.AddScoped<IProfileService, ProfileService>();
+builder.Services.AddScoped<IAnalyticsService, AnalyticsService>();
+
+// Register Storage services
+builder.Services.AddSingleton<StoragePathResolver>();
+builder.Services.AddScoped<IFileStorageService, CloudinaryStorageService>();
 
 // Add session support with security hardening
 builder.Services.AddDistributedMemoryCache();

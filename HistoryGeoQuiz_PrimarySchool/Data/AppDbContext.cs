@@ -18,6 +18,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Data
 
         public DbSet<ClassRoom> ClassRooms { get; set; }
         public DbSet<TeacherAssignment> TeacherAssignments { get; set; }
+        public DbSet<Media> Medias { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -35,6 +36,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Data
                     .IsRequired()
                     .HasMaxLength(20)
                     .HasConversion<string>();
+
+                entity.Property(e => e.Gender)
+                    .HasConversion<string>()
+                    .HasMaxLength(10);
 
                 // Student Key to Class
                 entity.HasOne(e => e.ClassRoom)
@@ -166,6 +171,12 @@ namespace HistoryGeoQuiz_PrimarySchool.Data
             modelBuilder.Entity<TestResult>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<TeacherAssignment>().HasQueryFilter(e => !e.IsDeleted);
             modelBuilder.Entity<TestDetail>().HasQueryFilter(e => !e.IsDeleted);
+            // Media configuration
+            modelBuilder.Entity<Media>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Url).IsRequired();
+            });
         }
     }
 }

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using HistoryGeoQuiz_PrimarySchool.Enums;
 
 namespace HistoryGeoQuiz_PrimarySchool.ViewModels
 {
@@ -38,5 +39,8 @@ namespace HistoryGeoQuiz_PrimarySchool.ViewModels
         [StringLength(100)]
         public string FullName { get; set; } = string.Empty;
 
+        [Required(ErrorMessage = "Vui lòng chọn giới tính")]
+        [Display(Name = "Giới tính")]
+        public Gender? Gender { get; set; }
     }
 }

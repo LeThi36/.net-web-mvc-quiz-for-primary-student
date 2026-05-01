@@ -65,6 +65,15 @@
                     <div class="result-stat-value text-primary">@Model.TotalQuestions</div>
                     <div class="result-stat-label">Tổng số câu</div>
                 </div>
+                <div class="result-stat">
+                    @{
+                        var minutes = Model.TimeTakenSeconds / 60;
+                        var seconds = Model.TimeTakenSeconds % 60;
+                        var timeString = minutes > 0 ? $"{minutes}p {seconds}s" : $"{seconds}s";
+                    }
+                    <div class="result-stat-value text-info">@timeString</div>
+                    <div class="result-stat-label">Thời gian làm</div>
+                </div>
             </div>
             
             <!-- Actions -->

@@ -361,6 +361,30 @@ h4 { font-size: 1.25rem; }
     margin-bottom: 0.5rem;
 }
 
+.required-star {
+    color: var(--danger-red);
+    font-weight: bold;
+    margin-left: 2px;
+}
+
+/* Validation Styles */
+.input-validation-error, .is-invalid {
+    border-color: var(--danger-red) !important;
+    background-color: rgba(255, 107, 107, 0.05) !important;
+}
+
+.field-validation-error {
+    color: var(--danger-red);
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+.input-validation-error:focus {
+    box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.15) !important;
+}
+
 .form-check-input {
     width: 1.5rem;
     height: 1.5rem;
@@ -935,3 +959,58 @@ h4 { font-size: 1.25rem; }
 .shadow-glow { box-shadow: var(--shadow-glow); }
 
 .cursor-pointer { cursor: pointer; }
+
+/* ===== Profile Styles ===== */
+.bg-gradient-primary {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+.avatar-preview-container {
+    transition: transform 0.3s ease;
+}
+
+.avatar-preview-container:hover {
+    transform: scale(1.05);
+}
+
+.custom-radio .form-check-input:checked {
+    background-color: #667eea;
+    border-color: #667eea;
+}
+
+@media (min-width: 768px) {
+    .border-end-md {
+        border-right: 1px solid #eee;
+    }
+}
+
+/* ===== Teacher Analytics Styles ===== */
+.bg-danger-light { background-color: rgba(220, 53, 69, 0.1); }
+.bg-success-light { background-color: rgba(25, 135, 84, 0.1); }
+.bg-primary-light { background-color: rgba(13, 110, 253, 0.1); }
+
+.progress {
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.table th.analytics-header {
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #6c757d;
+}
+
+.avatar-sm {
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+@media print {
+    .btn, .breadcrumb, nav, .footer { display: none !important; }
+    .card { border: 1px solid #ddd !important; box-shadow: none !important; }
+    .col-lg-8 { width: 65% !important; float: left; }
+    .col-lg-4 { width: 35% !important; float: right; }
+    .main-content { padding-top: 0 !important; }
+}

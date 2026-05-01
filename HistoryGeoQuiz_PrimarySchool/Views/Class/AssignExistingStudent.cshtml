@@ -6,6 +6,16 @@
 }
 
 <div class="container mt-4">
+    <div class="mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-person-check text-primary me-2"></i>
+            Thêm Học Sinh Có Sẵn Vào Lớp @Model.ClassName
+        </h2>
+        <p class="text-muted">Chọn học sinh chưa có lớp để gán vào lớp này.</p>
+        <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary mt-3">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow-sm">
@@ -45,9 +55,6 @@
                                 <button type="submit" class="btn btn-info btn-lg text-white">
                                     <i class="bi bi-person-plus"></i> Thêm Vào Lớp
                                 </button>
-                                <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left"></i> Quay lại
-                                </a>
                             </div>
                         </form>
                     }
@@ -60,9 +67,6 @@
                             <div class="d-flex gap-2 justify-content-center mt-3">
                                 <a asp-action="AddStudent" asp-route-id="@Model.ClassRoomId" class="btn btn-primary">
                                     <i class="bi bi-person-plus"></i> Tạo Học Sinh Mới
-                                </a>
-                                <a asp-action="Details" asp-route-id="@Model.ClassRoomId" class="btn btn-outline-secondary">
-                                    <i class="bi bi-arrow-left"></i> Quay lại
                                 </a>
                             </div>
                         </div>

@@ -4,6 +4,8 @@ namespace HistoryGeoQuiz_PrimarySchool.ViewModels
 {
     public class StudentDashboardViewModel
     {
+        public string? ClassName { get; set; }
+        public string? HomeroomTeacherName { get; set; }
         public List<LessonCardViewModel> Lessons { get; set; } = new List<LessonCardViewModel>();
         public List<TestResult> RecentResults { get; set; } = new List<TestResult>();
     }
@@ -25,6 +27,7 @@ namespace HistoryGeoQuiz_PrimarySchool.ViewModels
         public Guid LessonId { get; set; }
         public string LessonTitle { get; set; } = string.Empty;
         public string Subject { get; set; } = string.Empty;
+        public int? TimeLimitMinutes { get; set; }
         public List<QuizQuestionViewModel> Questions { get; set; } = new List<QuizQuestionViewModel>();
     }
 
@@ -58,6 +61,7 @@ namespace HistoryGeoQuiz_PrimarySchool.ViewModels
         public int CorrectAnswers { get; set; }
         public double Score { get; set; }
         public bool IsPassed { get; set; }
+        public int TimeTakenSeconds { get; set; }
         public DateTime CompletedAt { get; set; }
         public string Message { get; set; } = string.Empty;
     }

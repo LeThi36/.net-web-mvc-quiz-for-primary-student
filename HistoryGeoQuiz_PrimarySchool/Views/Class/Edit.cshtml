@@ -6,6 +6,16 @@
 }
 
 <div class="container mt-4">
+    <div class="mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-pencil-square text-primary me-2"></i>
+            Chỉnh Sửa Lớp
+        </h2>
+        <p class="text-muted">Cập nhật thông tin chi tiết cho lớp @Model.ClassName.</p>
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow">
@@ -43,8 +53,7 @@
                             </select>
                         </div>
 
-                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                            <a asp-action="Index" class="btn btn-secondary me-md-2">Quay lại</a>
+                        <div class="d-flex justify-content-end">
                             <button type="submit" class="btn btn-warning">Lưu Thay Đổi</button>
                         </div>
                     </form>

@@ -15,6 +15,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
     {
         private readonly ILessonService _lessonService;
         private readonly IQuestionService _questionService;
+        private readonly IAnalyticsService _analyticsService;
         private readonly ILogger<TeacherController> _logger;
 
         private const long MaxUploadFileSize = 5 * 1024 * 1024; // 5MB
@@ -22,10 +23,12 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         public TeacherController(
             ILessonService lessonService,
             IQuestionService questionService,
+            IAnalyticsService analyticsService,
             ILogger<TeacherController> logger)
         {
             _lessonService = lessonService;
             _questionService = questionService;
+            _analyticsService = analyticsService;
             _logger = logger;
         }
 
@@ -143,6 +146,17 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateLessonConfig(Guid lessonId, int? timeLimit, int? excellent, int? good)
+        {
+            if (!await _lessonService.UpdateLessonConfigAsync(lessonId, timeLimit, excellent, good, GetCurrentUserId()))
+                return NotFound();
+
+            TempData[TempDataKeys.SuccessMessage] = "Cập nhật cấu hình bài học thành công!";
+            return RedirectToAction("ManageQuestions", new { lessonId });
+        }
+
         [HttpGet]
         public async Task<IActionResult> CreateQuestion(Guid lessonId)
         {
@@ -229,6 +243,14 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
 
             TempData[TempDataKeys.SuccessMessage] = "Xóa câu hỏi thành công!";
             return RedirectToAction("ManageQuestions", new { lessonId });
+        }
+
+        public async Task<IActionResult> QuestionAnalytics(Guid lessonId)
+        {
+            var analytics = await _analyticsService.GetLessonAnalyticsAsync(lessonId, GetCurrentUserId());
+            if (analytics == null) return NotFound();
+
+            return View(analytics);
         }
 
         #endregion

@@ -4,6 +4,16 @@
 }
 
 <div class="container">
+    <div class="mb-4">
+        <h2 class="fw-bold mb-0">
+            <i class="bi bi-plus-circle text-primary me-2"></i>
+            Tạo Bài Học Mới
+        </h2>
+        <p class="text-muted">Thiết lập bài học và gán cho lớp học cụ thể.</p>
+        <a asp-action="Index" class="btn btn-outline-secondary mt-3">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+    </div>
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="card">
@@ -80,13 +90,10 @@
                             <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
                         
-                        <div class="d-flex gap-3">
+                        <div class="d-flex">
                             <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                                 <i class="bi bi-check-circle"></i> Tạo Bài Học
                             </button>
-                            <a asp-action="Index" class="btn btn-outline-secondary btn-lg">
-                                <i class="bi bi-arrow-left"></i> Quay lại
-                            </a>
                         </div>
                     </form>
                 </div>

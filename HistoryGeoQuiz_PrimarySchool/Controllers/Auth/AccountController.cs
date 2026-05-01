@@ -66,7 +66,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
                 return View(model);
 
             var (success, error) = await _authService.RegisterAsync(
-                model.Username, model.Password, model.FullName, UserRole.Student);
+                model.Username, model.Password, model.FullName, UserRole.Student, model.Gender!.Value);
 
             if (!success)
             {

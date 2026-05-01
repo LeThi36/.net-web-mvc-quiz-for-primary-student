@@ -40,74 +40,11 @@
             <i class="bi bi-stars me-2"></i>Xin chào, @ViewBag.UserName! 🌟
         </h1>
         <p class="text-white mb-2">
-            <i class="bi bi-people-fill me-1"></i> Lớp: <strong>@(ViewBag.ClassName ?? "Chưa phân lớp")</strong> | 
-            <i class="bi bi-person-badge me-1"></i> GVCN: <strong>@(ViewBag.HomeroomTeacher ?? "---")</strong>
+            <i class="bi bi-people-fill me-1"></i> Lớp: <strong>@(Model.ClassName ?? "Chưa phân lớp")</strong> | 
+            <i class="bi bi-person-badge me-1"></i> GVCN: <strong>@(Model.HomeroomTeacherName ?? "---")</strong>
         </p>
         <p class="dashboard-subtitle mb-0">Hãy chọn một bài học để bắt đầu làm bài trắc nghiệm nhé!</p>
     </div>
-    
-    <!-- Recent Results -->
-    @if (Model.RecentResults.Any())
-    {
-        <section class="mb-5">
-            <h2 class="section-title">
-                <i class="bi bi-clock-history text-purple"></i> Kết Quả Gần Đây
-            </h2>
-            <div class="card">
-                <div class="card-body p-0">
-                    <div class="table-responsive">
-                        <table class="table table-hover mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Bài học</th>
-                                    <th>Điểm</th>
-                                    <th>Kết quả</th>
-                                    <th>Thời gian</th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var result in Model.RecentResults)
-                                {
-                                    <tr>
-                                        <td>
-                                            @{
-                                                var icon = subjectDisplayNames.ContainsKey(result.Lesson?.Subject ?? "") ? subjectDisplayNames[result.Lesson.Subject] : "📖";
-                                            }
-                                            <span class="badge bg-primary me-1">@icon</span>
-                                            @result.Lesson?.Title
-                                        </td>
-                                        <td>
-                                            <span class="fw-bold @(result.Score >= 5 ? "text-success" : "text-danger")">
-                                                @result.Score/10
-                                            </span>
-                                        </td>
-                                        <td>
-                                            @if (result.IsPassed)
-                                            {
-                                                <span class="badge bg-success">✓ Đạt</span>
-                                            }
-                                            else
-                                            {
-                                                <span class="badge bg-danger">✗ Chưa đạt</span>
-                                            }
-                                        </td>
-                                        <td class="text-muted small">@result.CompletedAt.ToString("dd/MM HH:mm")</td>
-                                        <td>
-                                            <a asp-action="ReviewQuiz" asp-route-testResultId="@result.Id" 
-                                               class="btn btn-sm btn-outline-primary">
-                                                <i class="bi bi-eye"></i> Xem lại
-                                            </a>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-    }
     
     <!-- Lessons by Subject -->
     @if (Model.Lessons.Any())

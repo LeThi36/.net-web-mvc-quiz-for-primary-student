@@ -4,34 +4,17 @@ Tài liệu này lưu trữ các ý tưởng phát triển ứng dụng **Học 
 
 ---
 
-## 🎮 Nhóm 1: Trò Chơi Hóa (Gamification)
-*Tập trung vào đối tượng Học sinh. Trẻ em học tốt nhất khi chúng cảm thấy như đang chơi.*
-
-- [ ] **Hệ thống Điểm kinh nghiệm (EXP) & Lên cấp (Leveling):** 
-  - Mỗi câu trả lời đúng được `+10 EXP`. 
-  - Đạt mốc EXP nhất định sẽ được thăng cấp (Ví dụ: *Tân Binh ➡️ Học Giả ➡️ Nhà Sử Học Nhí*).
-- [ ] **Bộ sưu tập Huy hiệu (Badges):** 
-  - Hệ thống tự động trao huy hiệu khi đạt thành tựu: *Chuỗi 7 ngày học chăm, Trả lời đúng 10 câu liên tiếp, Đạt 3 điểm Xuất sắc liên tiếp.*
-- [ ] **Cửa hàng Avatar (Avatar Shop):** 
-  - Sử dụng điểm EXP kiếm được để "mua" hoặc mở khóa các ảnh đại diện (avatar) hình thú cưng, nhân vật hoạt hình.
-- [ ] **Bảng xếp hạng (Leaderboard):** 
-  - Bảng vinh danh Top 3 hoặc Top 5 của tuần/tháng trong phạm vi Lớp học. (Lưu ý: Chỉ hiện Top trên để tránh gây áp lực cho học sinh nhóm dưới).
-
----
-
-## 👩‍🏫 Nhóm 2: Công cụ Hỗ trợ Giáo Viên (Teacher Tools)
+## 👩‍🏫 Nhóm 1: Công cụ Hỗ trợ Giáo Viên (Teacher Tools)
 *Giúp giáo viên tiết kiệm thời gian, dễ dàng quản lý và nhìn ra lỗ hổng kiến thức của lớp.*
 
-- [ ] **Phân tích Câu hỏi khó (Question Analytics):** 
+- [x] **Phân tích Câu hỏi khó (Question Analytics):** 
   - Báo cáo thống kê (Ví dụ: *"Câu hỏi số 3 có 80% học sinh làm sai"*). Giúp giáo viên biết nên giảng lại phần kiến thức nào trên lớp.
-- [ ] **Chế độ Đấu Trường (Kahoot-style Mode):** 
-  - Giáo viên tạo một mã PIN, cả lớp nhập mã vào điện thoại/máy tính bảng để thi trắc nghiệm trực tiếp.
 - [ ] **Ngân hàng Câu hỏi chung (Shared Question Bank):** 
   - Các giáo viên trong cùng trường có thể chia sẻ câu hỏi cho nhau trên hệ thống thay vì trao đổi qua file Excel.
 
 ---
 
-## 🎨 Nhóm 3: Trải Nghiệm Người Dùng (UI/UX & Interactive)
+## 🎨 Nhóm 2: Trải Nghiệm Người Dùng (UI/UX & Interactive)
 *Nâng cao mức độ tương tác và cảm xúc khi sử dụng ứng dụng.*
 
 - [ ] **Hiệu ứng âm thanh & hình ảnh (Sound & Confetti):** 
@@ -44,7 +27,7 @@ Tài liệu này lưu trữ các ý tưởng phát triển ứng dụng **Học 
 
 ---
 
-## 👨‍👩‍👧‍👦 Nhóm 4: Cổng Phụ Huynh (Parent Connection)
+## 👨‍👩‍👧‍👦 Nhóm 3: Cổng Phụ Huynh (Parent Connection)
 *Tăng cường sự kết nối giữa nhà trường và gia đình.*
 
 - [ ] **Xuất & Gửi Báo Cáo Tự Động:** 

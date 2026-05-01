@@ -1,3 +1,4 @@
+@using HistoryGeoQuiz_PrimarySchool.Enums
 @model RegisterViewModel
 @{
     ViewData["Title"] = "Đăng Ký";
@@ -19,15 +20,25 @@
                 
                 <div class="mb-3">
                     <label asp-for="FullName" class="form-label">
-                        <i class="bi bi-person-badge me-1"></i>Họ và tên
+                        <i class="bi bi-person-badge me-1"></i>Họ và tên <span class="required-star">*</span>
                     </label>
                     <input asp-for="FullName" class="form-control" placeholder="Nhập họ và tên..." />
                     <span asp-validation-for="FullName" class="text-danger small"></span>
                 </div>
+
+                <div class="mb-3">
+                    <label asp-for="Gender" class="form-label">
+                        <i class="bi bi-gender-ambiguous me-1"></i>Giới tính <span class="required-star">*</span>
+                    </label>
+                    <select asp-for="Gender" class="form-select" asp-items="Html.GetEnumSelectList<Gender>()">
+                        <option value="">-- Chọn giới tính --</option>
+                    </select>
+                    <span asp-validation-for="Gender" class="text-danger small"></span>
+                </div>
                 
                 <div class="mb-3">
                     <label asp-for="Username" class="form-label">
-                        <i class="bi bi-person me-1"></i>Tên đăng nhập
+                        <i class="bi bi-person me-1"></i>Tên đăng nhập <span class="required-star">*</span>
                     </label>
                     <input asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập..." />
                     <span asp-validation-for="Username" class="text-danger small"></span>
@@ -35,17 +46,17 @@
                 
                 <div class="mb-3">
                     <label asp-for="Password" class="form-label">
-                        <i class="bi bi-lock me-1"></i>Mật khẩu
+                        <i class="bi bi-lock me-1"></i>Mật khẩu <span class="required-star">*</span>
                     </label>
-                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu..." />
+                    <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu..." type="password" />
                     <span asp-validation-for="Password" class="text-danger small"></span>
                 </div>
                 
                 <div class="mb-4">
                     <label asp-for="ConfirmPassword" class="form-label">
-                        <i class="bi bi-lock-fill me-1"></i>Xác nhận mật khẩu
+                        <i class="bi bi-lock-fill me-1"></i>Xác nhận mật khẩu <span class="required-star">*</span>
                     </label>
-                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu..." />
+                    <input asp-for="ConfirmPassword" class="form-control" placeholder="Nhập lại mật khẩu..." type="password" />
                     <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                 </div>
                 
@@ -66,3 +77,6 @@
     </div>
 </div>
 
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

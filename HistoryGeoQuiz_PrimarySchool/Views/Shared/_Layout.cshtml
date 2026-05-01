@@ -38,10 +38,10 @@
                         var userName = Context.Session.GetString(SessionKeys.UserName);
                         
                         <li class="nav-item">
-                            <span class="nav-link">
+                            <a class="nav-link" asp-controller="Profile" asp-action="Index" title="Trang cá nhân">
                                 <i class="bi bi-person-circle me-1"></i>
                                 Xin chào, @userName!
-                            </span>
+                            </a>
                         </li>
                         
                         @if (role == nameof(HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Admin))

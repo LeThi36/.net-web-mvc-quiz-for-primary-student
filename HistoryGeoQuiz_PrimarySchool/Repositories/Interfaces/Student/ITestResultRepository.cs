@@ -12,5 +12,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces
         Task<TestResult?> GetWithLessonAsync(Guid testResultId, Guid studentId);
         Task<TestResult?> GetWithFullReviewAsync(Guid testResultId, Guid studentId);
         Task AddDetailsAsync(IEnumerable<TestDetail> details);
+        
+        // Analytics methods
+        Task<List<TestDetail>> GetDetailsByLessonAsync(Guid lessonId);
+        Task<int> GetTotalParticipantsByLessonAsync(Guid lessonId);
+        Task<List<TestResult>> GetResultsByLessonAsync(Guid lessonId);
     }
 }

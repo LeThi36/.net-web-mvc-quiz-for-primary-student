@@ -1,0 +1,116 @@
+@using HistoryGeoQuiz_PrimarySchool.Enums
+@using HistoryGeoQuiz_PrimarySchool.ViewModels
+@model UpdateProfileViewModel
+@{
+    ViewData["Title"] = "Trang Cá Nhân";
+    var profile = ViewBag.Profile as ProfileViewModel;
+    bool isStudent = profile?.Role == UserRole.Student;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10 col-lg-8">
+            <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+                <div class="card-header bg-gradient-primary text-white p-4 text-center position-relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 120px;">
+                    <h3 class="mb-0 fw-bold">Thiết Lập Tài Khoản</h3>
+                    <p class="opacity-75 mb-0">Quản lý thông tin cá nhân và ảnh đại diện của bạn</p>
+                </div>
+                
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="Update" method="post" enctype="multipart/form-data">
+                        <div class="row">
+                            <!-- Left Side: Avatar -->
+                            <div class="col-md-4 text-center mb-4 mb-md-0 border-end-md">
+                                <div class="position-relative d-inline-block">
+                                    <div class="avatar-preview-container shadow-sm mb-3">
+                                        <img id="avatar-preview" src="@profile?.AvatarUrl" 
+                                             class="rounded-circle img-thumbnail shadow" 
+                                             style="width: 160px; height: 160px; object-fit: cover;" 
+                                             alt="Avatar" />
+                                    </div>
+                                    <label for="avatar-upload" class="btn btn-sm btn-primary rounded-circle position-absolute" 
+                                           style="bottom: 10px; right: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                        <i class="bi bi-camera-fill"></i>
+                                    </label>
+                                    <input id="avatar-upload" asp-for="AvatarFile" type="file" class="d-none" accept="image/*" onchange="previewImage(this)" />
+                                </div>
+                                <div class="mt-2">
+                                    <h5 class="fw-bold mb-0">@profile?.FullName</h5>
+                                    <span class="badge @(profile?.Role == UserRole.Admin ? "bg-danger" : profile?.Role == UserRole.Teacher ? "bg-success" : "bg-info") rounded-pill px-3">
+                                        @profile?.Role
+                                    </span>
+                                    @if (!string.IsNullOrEmpty(profile?.ClassName))
+                                    {
+                                        <div class="mt-1 small text-muted">
+                                            <i class="bi bi-mortarboard me-1"></i> Lớp: @profile.ClassName
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Right Side: Info -->
+                            <div class="col-md-8 ps-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label text-muted small fw-bold text-uppercase">Tên đăng nhập</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text bg-light border-0"><i class="bi bi-person"></i></span>
+                                        <input type="text" class="form-control bg-light border-0" value="@profile?.Username" readonly />
+                                    </div>
+                                    <div class="form-text small">Tên đăng nhập không thể thay đổi.</div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="FullName" class="form-label text-muted small fw-bold text-uppercase">Họ và tên <span class="required-star text-danger">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text border-0"><i class="bi bi-person"></i></span>
+                                        <input asp-for="FullName" class="form-control @(isStudent ? "bg-light border-0" : "")" 
+                                               placeholder="Nhập họ và tên..." readonly="@isStudent">
+                                    </div>
+                                    <span asp-validation-for="FullName" class="text-danger small"></span>
+                                    @if (isStudent)
+                                    {
+                                        <div class="form-text small text-warning"><i class="bi bi-info-circle me-1"></i> Học sinh vui lòng liên hệ Giáo viên để đổi họ tên.</div>
+                                    }
+                                </div>
+
+                                <div class="mb-4">
+                                    <label asp-for="Gender" class="form-label text-muted small fw-bold text-uppercase">Giới tính <span class="required-star">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text @(isStudent ? "bg-light" : "") border-0"><i class="bi bi-gender-ambiguous"></i></span>
+                                        <select asp-for="Gender" class="form-select @(isStudent ? "bg-light border-0" : "")" 
+                                                asp-items="Html.GetEnumSelectList<Gender>()" 
+                                                disabled="@isStudent">
+                                            <option value="">-- Chọn giới tính --</option>
+                                        </select>
+                                    </div>
+                                    <span asp-validation-for="Gender" class="text-danger small"></span>
+                                </div>
+
+                                <div class="d-grid mt-4">
+                                    <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm" style="border-radius: 10px; transition: all 0.3s;">
+                                        <i class="bi bi-check2-circle me-1"></i> Lưu Thay Đổi
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('avatar-preview').src = e.target.result;
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+}

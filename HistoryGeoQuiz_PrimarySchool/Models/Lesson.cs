@@ -16,7 +16,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
 
         [Required(ErrorMessage = "Vui lòng chọn môn học")]
         [Display(Name = "Môn học")]
-        public string Subject { get; set; } = "LichSu"; // "LichSu" or "DiaLy"
+        public string Subject { get; set; }
 
         [Display(Name = "Số thứ tự bài")]
         public int LessonNumber { get; set; } = 1;
@@ -40,6 +40,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
 
         [Display(Name = "Số câu đúng để đạt Tốt")]
         public int? QuestionCountForGood { get; set; }
+
+        [Display(Name = "Thời gian làm bài (phút)")]
+        [Range(1, 180, ErrorMessage = "Thời gian phải từ 1-180 phút")]
+        public int? TimeLimitMinutes { get; set; }
 
         // Navigation properties
         public virtual ICollection<Question> Questions { get; set; } = new List<Question>();

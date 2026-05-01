@@ -111,6 +111,10 @@
                                            class="btn btn-primary btn-sm">
                                             <i class="bi bi-list-check"></i> Câu hỏi
                                         </a>
+                                        <a asp-action="QuestionAnalytics" asp-route-lessonId="@lesson.Id" 
+                                           class="btn btn-info btn-sm text-white">
+                                            <i class="bi bi-bar-chart-line"></i> Phân tích
+                                        </a>
                                         <a asp-action="EditLesson" asp-route-id="@lesson.Id" 
                                            class="btn btn-outline-primary btn-sm">
                                             <i class="bi bi-pencil"></i>

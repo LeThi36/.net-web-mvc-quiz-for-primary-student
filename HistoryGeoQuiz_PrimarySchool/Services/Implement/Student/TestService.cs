@@ -36,6 +36,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
 
         public async Task<StudentDashboardViewModel> GetStudentDashboardAsync(Guid userId)
         {
+            // Get student basic info including class and homeroom teacher
+            var (_, className, teacherName) = await GetStudentInfoAsync(userId);
+
             var student = await _userRepo.GetByIdAsync(userId);
             var classRoomId = student?.ClassRoomId;
 
@@ -72,6 +75,8 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
 
             return new StudentDashboardViewModel
             {
+                ClassName = className,
+                HomeroomTeacherName = teacherName,
                 Lessons = lessonCards,
                 RecentResults = recentResults
             };
@@ -94,6 +99,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
                 LessonId = lesson.Id,
                 LessonTitle = lesson.Title,
                 Subject = lesson.Subject,
+                TimeLimitMinutes = lesson.TimeLimitMinutes,
                 Questions = lesson.Questions
                     .OrderBy(q => q.OrderIndex)
                     .Select((q, index) => new QuizQuestionViewModel
@@ -113,7 +119,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
             };
         }
 
-        public async Task<TestResult> SubmitQuizAsync(Guid lessonId, Dictionary<string, Guid> answers, Guid userId)
+        public async Task<TestResult> SubmitQuizAsync(Guid lessonId, Dictionary<string, Guid> answers, Guid userId, int timeTakenSeconds = 0)
         {
             var student = await _userRepo.GetByIdAsync(userId);
             var lesson = await _lessonRepo.GetActiveWithQuestionsAsync(lessonId);
@@ -162,7 +168,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
                 Score = score,
                 IsPassed = score >= 5,
                 CompletedAt = DateTime.UtcNow,
-                TimeTakenSeconds = 0,
+                TimeTakenSeconds = timeTakenSeconds,
                 // P1.3 FIX: Use navigation property — EF Core auto-assigns FK
                 Details = testDetails
             };
@@ -204,6 +210,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
                 CorrectAnswers = result.CorrectAnswers,
                 Score = result.Score,
                 IsPassed = result.IsPassed,
+                TimeTakenSeconds = result.TimeTakenSeconds,
                 CompletedAt = result.CompletedAt,
                 Message = message
             };

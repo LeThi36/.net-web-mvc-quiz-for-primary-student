@@ -48,5 +48,35 @@ namespace HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Student
         {
             await _context.TestDetails.AddRangeAsync(details);
         }
+
+        public async Task<List<TestDetail>> GetDetailsByLessonAsync(Guid lessonId)
+        {
+            return await _context.TestDetails
+                .AsNoTracking()
+                .Include(d => d.Question)
+                .Where(d => d.TestResult!.LessonId == lessonId)
+                .ToListAsync();
+        }
+
+        public async Task<int> GetTotalParticipantsByLessonAsync(Guid lessonId)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Where(r => r.LessonId == lessonId)
+                .Select(r => r.StudentId)
+                .Distinct()
+                .CountAsync();
+        }
+
+        public async Task<List<TestResult>> GetResultsByLessonAsync(Guid lessonId)
+        {
+            return await _dbSet
+                .AsNoTracking()
+                .Include(r => r.Student)
+                .Where(r => r.LessonId == lessonId)
+                .OrderByDescending(r => r.Score)
+                .ThenBy(r => r.TimeTakenSeconds)
+                .ToListAsync();
+        }
     }
 }
