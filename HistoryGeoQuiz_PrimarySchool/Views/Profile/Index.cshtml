@@ -10,8 +10,8 @@
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10 col-lg-8">
-            <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
-                <div class="card-header bg-gradient-primary text-white p-4 text-center position-relative" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 120px;">
+            <div class="card profile-shell overflow-hidden">
+                <div class="card-header profile-header text-white p-4 text-center position-relative">
                     <h3 class="mb-0 fw-bold">Thiết Lập Tài Khoản</h3>
                     <p class="opacity-75 mb-0">Quản lý thông tin cá nhân và ảnh đại diện của bạn</p>
                 </div>
@@ -24,12 +24,10 @@
                                 <div class="position-relative d-inline-block">
                                     <div class="avatar-preview-container shadow-sm mb-3">
                                         <img id="avatar-preview" src="@profile?.AvatarUrl" 
-                                             class="rounded-circle img-thumbnail shadow" 
-                                             style="width: 160px; height: 160px; object-fit: cover;" 
+                                             class="rounded-circle img-thumbnail shadow avatar-preview" 
                                              alt="Avatar" />
                                     </div>
-                                    <label for="avatar-upload" class="btn btn-sm btn-primary rounded-circle position-absolute" 
-                                           style="bottom: 10px; right: 10px; width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                                    <label for="avatar-upload" class="btn btn-sm btn-primary rounded-circle position-absolute avatar-upload-button">
                                         <i class="bi bi-camera-fill"></i>
                                     </label>
                                     <input id="avatar-upload" asp-for="AvatarFile" type="file" class="d-none" accept="image/*" onchange="previewImage(this)" />
@@ -87,7 +85,7 @@
                                 </div>
 
                                 <div class="d-grid mt-4">
-                                    <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm" style="border-radius: 10px; transition: all 0.3s;">
+                                    <button type="submit" class="btn btn-primary profile-submit py-2 fw-bold">
                                         <i class="bi bi-check2-circle me-1"></i> Lưu Thay Đổi
                                     </button>
                                 </div>

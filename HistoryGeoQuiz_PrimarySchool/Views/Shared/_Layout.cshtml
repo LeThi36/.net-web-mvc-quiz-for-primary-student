@@ -3,12 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Học Tập Tiểu Học</title>
+    <title>@ViewData["Title"] - Sunny Quiz Tiểu Học</title>
     
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
     
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -21,47 +21,60 @@
 </head>
 <body>
     <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg sticky-top">
+    <nav class="navbar app-navbar navbar-expand-lg sticky-top">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-mortarboard me-2"></i>
-                Học Tập Tiểu Học
+            @{
+                var isSignedIn = Context.Session.GetString(SessionKeys.UserId) != null;
+                var role = Context.Session.GetString(SessionKeys.UserRole);
+                var userName = Context.Session.GetString(SessionKeys.UserName);
+                var userId = Context.Session.GetString(SessionKeys.UserId);
+                var avatarUrl = Context.Session.GetString(SessionKeys.UserAvatarUrl);
+
+                if (isSignedIn && string.IsNullOrWhiteSpace(avatarUrl) && !string.IsNullOrWhiteSpace(userId))
+                {
+                    avatarUrl = AvatarHelper.ForUser(userId);
+                }
+            }
+
+            <a class="navbar-brand nav-brand-area" href="/">
+                <span class="nav-brand-mark"><i class="bi bi-mortarboard"></i></span>
+                <span>Sunny Quiz Tiểu Học</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    @if (Context.Session.GetString(SessionKeys.UserId) != null)
+            <div class="collapse navbar-collapse nav-shell" id="navbarNav">
+                <ul class="navbar-nav nav-center-menu">
+                    @if (isSignedIn)
                     {
-                        var role = Context.Session.GetString(SessionKeys.UserRole);
-                        var userName = Context.Session.GetString(SessionKeys.UserName);
-                        
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Profile" asp-action="Index" title="Trang cá nhân">
-                                <i class="bi bi-person-circle me-1"></i>
-                                Xin chào, @userName!
-                            </a>
-                        </li>
-                        
-                        @if (role == nameof(HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Admin))
+                        @if (role == nameof(UserRole.Admin))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Class" asp-action="Index">
-                                    <i class="bi bi-gear me-1"></i>Quản lý Lớp
+                                    <i class="bi bi-building me-1"></i>Quản lý lớp
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="User" asp-action="Index">
-                                    <i class="bi bi-person-lines-fill me-1"></i>Quản lý Giáo Viên
+                                    <i class="bi bi-person-lines-fill me-1"></i>Giáo viên
                                 </a>
                             </li>
                         }
-                        else if (role == nameof(HistoryGeoQuiz_PrimarySchool.Enums.UserRole.Teacher))
+                        else if (role == nameof(UserRole.Teacher))
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Teacher" asp-action="Index">
-                                    <i class="bi bi-house-heart me-1"></i>Dashboard
+                                    <i class="bi bi-grid me-1"></i>Trang chủ
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Teacher" asp-action="MyClasses">
+                                    <i class="bi bi-people me-1"></i>Lớp của tôi
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Teacher" asp-action="CreateLesson">
+                                    <i class="bi bi-plus-circle me-1"></i>Tạo bài học
                                 </a>
                             </li>
                         }
@@ -69,7 +82,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Student" asp-action="Index">
-                                    <i class="bi bi-house-heart me-1"></i>Dashboard
+                                    <i class="bi bi-grid me-1"></i>Trang chủ
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -78,31 +91,82 @@
                                 </a>
                             </li>
                         }
-                        
-                        <li class="nav-item">
-                            @* [S12] FIX: Logout must be POST to prevent CSRF *@
-                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="nav-link btn-logout border-0 bg-transparent">
-                                    <i class="bi bi-box-arrow-right me-1"></i>Đăng xuất
-                                </button>
-                            </form>
-                        </li>
+                    }
+                </ul>
+
+                <div class="nav-user-area">
+                    @if (isSignedIn)
+                    {
+                        <span class="nav-greeting">Xin chào, <strong>@userName</strong></span>
+                        <div class="dropdown">
+                            <button class="nav-avatar-button" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Mở menu tài khoản">
+                                <img src="@avatarUrl" alt="Ảnh đại diện của @userName" />
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end nav-user-dropdown">
+                                <div class="dropdown-header nav-dropdown-header">
+                                    <img src="@avatarUrl" alt="" />
+                                    <div>
+                                        <div class="fw-bold">@userName</div>
+                                        <small>@role</small>
+                                    </div>
+                                </div>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" asp-controller="Profile" asp-action="Index">
+                                    <i class="bi bi-person-circle"></i> Trang cá nhân
+                                </a>
+
+                                @if (role == nameof(UserRole.Admin))
+                                {
+                                    <a class="dropdown-item" asp-controller="Class" asp-action="Index">
+                                        <i class="bi bi-building"></i> Quản lý lớp
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="User" asp-action="Index">
+                                        <i class="bi bi-person-lines-fill"></i> Quản lý giáo viên
+                                    </a>
+                                }
+                                else if (role == nameof(UserRole.Teacher))
+                                {
+                                    <a class="dropdown-item" asp-controller="Teacher" asp-action="Index">
+                                        <i class="bi bi-grid"></i> Trang chủ
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Teacher" asp-action="MyClasses">
+                                        <i class="bi bi-people"></i> Lớp của tôi
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Teacher" asp-action="CreateLesson">
+                                        <i class="bi bi-plus-circle"></i> Tạo bài học
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a class="dropdown-item" asp-controller="Student" asp-action="Index">
+                                        <i class="bi bi-grid"></i> Trang chủ
+                                    </a>
+                                    <a class="dropdown-item" asp-controller="Student" asp-action="History">
+                                        <i class="bi bi-clock-history"></i> Lịch sử
+                                    </a>
+                                }
+
+                                <div class="dropdown-divider"></div>
+                                @* [S12] FIX: Logout must be POST to prevent CSRF *@
+                                <form asp-controller="Account" asp-action="Logout" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="dropdown-item nav-logout-item">
+                                        <i class="bi bi-box-arrow-right"></i> Đăng xuất
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
                     }
                     else
                     {
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Account" asp-action="Login">
-                                <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link btn-register" asp-controller="Account" asp-action="Register">
-                                <i class="bi bi-person-plus me-1"></i>Đăng ký
-                            </a>
-                        </li>
+                        <a class="nav-link" asp-controller="Account" asp-action="Login">
+                            <i class="bi bi-box-arrow-in-right me-1"></i>Đăng nhập
+                        </a>
+                        <a class="nav-link btn-register" asp-controller="Account" asp-action="Register">
+                            <i class="bi bi-person-plus me-1"></i>Đăng ký
+                        </a>
                     }
-                </ul>
+                </div>
             </div>
         </div>
     </nav>
@@ -113,15 +177,30 @@
     </main>
 
     <!-- Footer -->
-    <footer class="footer">
-        <div class="container text-center">
-            <div class="footer-icons">
-                <i class="bi bi-book"></i>
-                <i class="bi bi-calculator"></i>
-                <i class="bi bi-mortarboard"></i>
+    <footer class="footer site-footer">
+        <div class="container">
+            <div class="footer-panel">
+                <div class="footer-brand">
+                    <div class="footer-brand-mark">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <div>
+                        <h2>Sunny Quiz Tiểu Học</h2>
+                        <p>Dành cho học sinh tiểu học luyện tập nhẹ nhàng, rõ tiến độ và dễ theo dõi.</p>
+                    </div>
+                </div>
+
+                <div class="footer-highlights" aria-label="Điểm nổi bật">
+                    <span><i class="bi bi-book"></i> Bài học rõ ràng</span>
+                    <span><i class="bi bi-check2-circle"></i> Chấm điểm nhanh</span>
+                    <span><i class="bi bi-bar-chart-line"></i> Theo dõi kết quả</span>
+                </div>
             </div>
-            <p class="mb-0">Học Tập Tiểu Học - Dành cho học sinh tiểu học</p>
-            <p class="small">© 2026 - Học vui, hiểu sâu! 📚</p>
+
+            <div class="footer-bottom">
+                <span>© 2026 Sunny Quiz Tiểu Học</span>
+                <span>Học vui, hiểu sâu</span>
+            </div>
         </div>
     </footer>
 

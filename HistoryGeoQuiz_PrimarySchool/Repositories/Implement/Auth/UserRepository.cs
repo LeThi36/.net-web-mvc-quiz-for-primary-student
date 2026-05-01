@@ -19,7 +19,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Auth
         }
 
         public async Task<User?> GetByUsernameAsync(string username)
-            => await _dbSet.FirstOrDefaultAsync(u => u.Username == username);
+            => await _dbSet
+                .Include(u => u.Avatar)
+                .FirstOrDefaultAsync(u => u.Username == username);
 
         public async Task<bool> UsernameExistsAsync(string username)
             => await _dbSet.AnyAsync(u => u.Username == username);

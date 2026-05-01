@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using HistoryGeoQuiz_PrimarySchool.Constants;
 using HistoryGeoQuiz_PrimarySchool.Enums;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
 
@@ -48,6 +49,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             HttpContext.Session.SetString(SessionKeys.UserId, user.Id.ToString());
             HttpContext.Session.SetString(SessionKeys.UserName, user.FullName);
             HttpContext.Session.SetString(SessionKeys.UserRole, user.Role.ToString());
+            HttpContext.Session.SetString(
+                SessionKeys.UserAvatarUrl,
+                user.Avatar?.Url ?? AvatarHelper.ForUser(user.Id.ToString(), user.Gender));
 
             return RedirectToDashboard(user.Role.ToString());
         }

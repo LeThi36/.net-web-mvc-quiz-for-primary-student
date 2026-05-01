@@ -1,4 +1,4 @@
-@model HistoryGeoQuiz_PrimarySchool.ViewModels.ImportStudentsResultViewModel
+﻿@model HistoryGeoQuiz_PrimarySchool.ViewModels.ImportStudentsResultViewModel
 
 @{
     ViewData["Title"] = "Kết Quả Import";
@@ -24,7 +24,7 @@
     <div class="row justify-content-center">
         <div class="col-md-10">
             <!-- Summary Card -->
-            <div class="card shadow-sm mb-4">
+            <div class="card teacher-panel mb-4">
                 <div class="card-header bg-info text-white">
                     <h5 class="mb-0">
                         <i class="bi bi-clipboard-check"></i> 
@@ -58,7 +58,7 @@
             <!-- Success List -->
             @if (Model.SuccessfulStudents.Any())
             {
-                <div class="card shadow-sm mb-4 border-success">
+                <div class="card teacher-panel mb-4 border-success">
                     <div class="card-header bg-success text-white">
                         <h6 class="mb-0">
                             <i class="bi bi-check-circle"></i> 
@@ -96,7 +96,7 @@
             <!-- Error List -->
             @if (Model.Errors.Any())
             {
-                <div class="card shadow-sm mb-4 border-danger">
+                <div class="card teacher-panel mb-4 border-danger">
                     <div class="card-header bg-danger text-white">
                         <h6 class="mb-0">
                             <i class="bi bi-x-circle"></i> 
