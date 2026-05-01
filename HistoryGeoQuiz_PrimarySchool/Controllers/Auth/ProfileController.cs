@@ -53,6 +53,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers.Auth
                 if (profile != null)
                 {
                     HttpContext.Session.SetString(SessionKeys.UserName, profile.FullName);
+                    if (!string.IsNullOrWhiteSpace(profile.AvatarUrl))
+                    {
+                        HttpContext.Session.SetString(SessionKeys.UserAvatarUrl, profile.AvatarUrl);
+                    }
                 }
             }
             else

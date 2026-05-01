@@ -55,7 +55,7 @@
             <div class="question-card fade-in @(question.IsCorrect ? "border-start border-5 border-success" : "border-start border-5 border-danger")" 
                  style="animation-delay: @(question.QuestionNumber * 0.1)s;">
                 <div class="d-flex align-items-start mb-3">
-                    <span class="question-number" style="background: @(question.IsCorrect ? "var(--success-green)" : "var(--danger-red)");">
+                    <span class="question-number @(question.IsCorrect ? "is-correct" : "is-wrong")">
                         @question.QuestionNumber
                     </span>
                     <div>
@@ -89,7 +89,7 @@
                             classes.Add("not-selected");
                         }
                         
-                        <div class="@string.Join(" ", classes)" style="cursor: default;">
+                        <div class="@string.Join(" ", classes) readonly">
                             <span class="answer-label">@answer.AnswerLabel</span>
                             <span class="answer-text">@answer.AnswerText</span>
                             

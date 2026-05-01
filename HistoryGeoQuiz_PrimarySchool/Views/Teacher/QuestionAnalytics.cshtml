@@ -15,7 +15,7 @@
             <p class="text-muted mb-0">Tổng quan kết quả học tập của lớp.</p>
         </div>
         <div class="d-flex justify-content-between align-items-center">
-            <a asp-action="ManageQuestions" asp-route-lessonId="@Model.LessonId" class="btn btn-outline-secondary">
+            <a asp-action="Index" class="btn btn-outline-secondary">
                 <i class="bi bi-arrow-left me-1"></i> Quay lại
             </a>
             <button onclick="window.print()" class="btn btn-outline-primary">
@@ -28,7 +28,7 @@
     <div class="row">
         <!-- Left Column: 2/3 Width - Question Analytics Table -->
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card teacher-panel mb-4">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Chi tiết từng câu hỏi</h5>
                     <span class="badge bg-light text-dark border">@Model.QuestionStats.Count Câu hỏi</span>
@@ -40,7 +40,7 @@
                                 <tr>
                                     <th class="ps-4 py-3">Câu hỏi</th>
                                     <th class="text-center">Số lượt giải</th>
-                                    <th style="width: 200px;">Tỷ lệ Đúng</th>
+                                    <th class="analytics-col-rate">Tỷ lệ Đúng</th>
                                     <th class="text-center">Đánh giá</th>
                                 </tr>
                             </thead>
@@ -50,14 +50,14 @@
                                     var accuracyStyle = stat.AccuracyRate + "%";
                                     <tr>
                                         <td class="ps-4">
-                                            <div class="fw-semibold text-dark text-truncate" style="max-width: 300px;" title="@stat.QuestionText">
+                                            <div class="fw-semibold text-dark text-truncate analytics-question" title="@stat.QuestionText">
                                                 @stat.QuestionText
                                             </div>
                                         </td>
                                         <td class="text-center">@stat.TotalAttempts</td>
                                         <td>
                                             <div class="d-flex align-items-center">
-                                                <div class="progress flex-grow-1" style="height: 8px;">
+                                                <div class="progress progress-sm flex-grow-1">
                                                     <div class="progress-bar @(stat.IsHardQuestion ? "bg-danger" : "bg-success")" 
                                                          role="progressbar" style="width: @(accuracyStyle)"></div>
                                                 </div>
@@ -92,26 +92,26 @@
         <!-- Right Column: 1/3 Width - Summary Stats & Highlights -->
         <div class="col-lg-4">
             <!-- Summary Stats Card -->
-            <div class="card border-0 shadow-sm mb-4">
+            <div class="card teacher-panel mb-4">
                 <div class="card-header bg-white py-3">
                     <h5 class="mb-0 fw-bold">Thông số tổng quát</h5>
                 </div>
                 <div class="card-body">
                     <div class="row g-3">
                         <div class="col-6">
-                            <div class="p-3 border rounded-3 bg-light text-center">
+                            <div class="stat-tile text-center">
                                 <div class="text-muted small mb-1">Số lượt thi</div>
                                 <div class="h4 fw-bold mb-0">@Model.TotalParticipants</div>
                             </div>
                         </div>
                         <div class="col-6">
-                            <div class="p-3 border rounded-3 bg-light text-center">
+                            <div class="stat-tile text-center">
                                 <div class="text-muted small mb-1">Điểm TB</div>
                                 <div class="h4 fw-bold mb-0 text-primary">@Model.AverageScore</div>
                             </div>
                         </div>
                         <div class="col-12">
-                            <div class="p-3 border rounded-3 bg-light d-flex justify-content-between align-items-center">
+                            <div class="stat-tile d-flex justify-content-between align-items-center">
                                 <div class="text-muted small">Thời gian làm bài TB</div>
                                 <div class="fw-bold">@TimeSpan.FromSeconds(Model.AverageTimeSeconds).ToString(@"mm\:ss")</div>
                             </div>
@@ -121,7 +121,7 @@
                     <hr class="my-4 opacity-10">
 
                     <h6 class="fw-bold mb-3 small text-uppercase text-muted">Kết quả Đạt / Không đạt</h6>
-                    <div class="progress mb-2" style="height: 25px; border-radius: 8px;">
+                    <div class="progress progress-lg mb-2">
                         @{
                             var total = Model.PassCount + Model.FailCount;
                             var passPct = total > 0 ? (double)Model.PassCount / total * 100 : 0;
@@ -138,7 +138,7 @@
             </div>
 
             <!-- Top Students Card -->
-            <div class="card border-0 shadow-sm">
+            <div class="card teacher-panel">
                 <div class="card-header bg-white py-3 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Học sinh tiêu biểu</h5>
                     <i class="bi bi-trophy text-warning fs-5"></i>
@@ -149,12 +149,12 @@
                         {
                             <li class="list-group-item border-0 py-3 d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center">
-                                    <div class="avatar-sm rounded-circle bg-primary-light text-primary d-flex align-items-center justify-content-center me-3" style="width: 32px; height: 32px;">
+                                    <div class="avatar-sm rounded-circle bg-primary-light text-primary me-3">
                                         @(student.FullName.Substring(0, 1))
                                     </div>
                                     <div>
                                         <div class="fw-semibold small">@student.FullName</div>
-                                        <div class="text-muted" style="font-size: 0.7rem;">
+                                        <div class="text-muted small-meta">
                                             <i class="bi bi-clock me-1"></i> @TimeSpan.FromSeconds(student.TimeSeconds).ToString(@"mm\:ss")
                                         </div>
                                     </div>
