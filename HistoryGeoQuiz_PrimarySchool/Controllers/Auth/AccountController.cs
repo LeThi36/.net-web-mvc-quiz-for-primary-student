@@ -4,6 +4,7 @@ using HistoryGeoQuiz_PrimarySchool.Enums;
 using HistoryGeoQuiz_PrimarySchool.Helpers;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Auth;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers
 {
@@ -21,10 +22,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            var userIdStr = HttpContext.Session.GetString(SessionKeys.UserId);
-            if (!string.IsNullOrEmpty(userIdStr))
+            if (User.Identity?.IsAuthenticated ?? false)
             {
-                return RedirectToDashboard(HttpContext.Session.GetString(SessionKeys.UserRole));
+                return RedirectToDashboard(GetCurrentUserRole());
             }
             return View();
         }
@@ -44,8 +44,17 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
                 return View(model);
             }
 
-            // Regenerate session to prevent session fixation
-            HttpContext.Session.Clear();
+            // JWT Migration: Generate token and store in Secure Cookie
+            var token = _authService.GenerateJwtToken(user);
+            Response.Cookies.Append("AuthToken", token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = HttpContext.Request.IsHttps,
+                SameSite = SameSiteMode.Strict,
+                Expires = DateTime.UtcNow.AddDays(1)
+            });
+
+            // Keep session temporarily for compatibility with existing filters/views
             HttpContext.Session.SetString(SessionKeys.UserId, user.Id.ToString());
             HttpContext.Session.SetString(SessionKeys.UserName, user.FullName);
             HttpContext.Session.SetString(SessionKeys.UserRole, user.Role.ToString());
@@ -87,6 +96,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
+            Response.Cookies.Delete("AuthToken");
             return RedirectToAction("Login");
         }
 

@@ -4,6 +4,8 @@ using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Admin;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 using Microsoft.AspNetCore.Http;
 using System.Web;
 
@@ -50,6 +52,11 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Admin
                 var fullName = row.Cell(1).GetString()?.Trim();
                 var username = row.Cell(2).GetString()?.Trim();
                 var password = row.Cell(3).GetString()?.Trim();
+                var genderStr = row.Cell(4).GetString()?.Trim()?.ToLower();
+                
+                Gender gender = Gender.Male;
+                if (genderStr == "nữ" || genderStr == "female" || genderStr == "nu") 
+                    gender = Gender.Female;
 
                 // Validate row data
                 if (string.IsNullOrEmpty(fullName) || string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
@@ -89,8 +96,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Admin
                     FullName = fullName,
                     Username = username, // Username kept as-is for login matching
                     Password = hashedPassword,
+                    Gender = gender,
                     Role = UserRole.Teacher,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeHelper.GetVietnamTime()
                 };
 
                 newTeachers.Add(teacher);
@@ -125,8 +133,9 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Admin
                 FullName = model.FullName,
                 Username = model.Username,
                 Password = hashedPassword,
+                Gender = model.Gender,
                 Role = UserRole.Teacher,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeHelper.GetVietnamTime()
             };
 
             await _userRepo.AddAsync(teacher);

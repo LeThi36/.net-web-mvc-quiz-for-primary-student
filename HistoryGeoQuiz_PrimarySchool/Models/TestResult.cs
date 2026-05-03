@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
@@ -28,7 +29,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
         public bool IsPassed { get; set; }
 
         [Display(Name = "Thời gian hoàn thành")]
-        public DateTime CompletedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CompletedAt { get; set; } = DateTimeHelper.GetVietnamTime();
 
         [Display(Name = "Thời gian làm bài (giây)")]
         public int TimeTakenSeconds { get; set; }

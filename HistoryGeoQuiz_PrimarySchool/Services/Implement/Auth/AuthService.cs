@@ -1,7 +1,12 @@
+using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
+using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.Enums;
-using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
-using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth
 {
@@ -13,11 +18,13 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth
     {
         private readonly IUserRepository _userRepo;
         private readonly ILogger<AuthService> _logger;
+        private readonly IConfiguration _config;
 
-        public AuthService(IUserRepository userRepo, ILogger<AuthService> logger)
+        public AuthService(IUserRepository userRepo, ILogger<AuthService> logger, IConfiguration config)
         {
             _userRepo = userRepo;
             _logger = logger;
+            _config = config;
         }
 
         public async Task<User?> LoginAsync(string username, string password)
@@ -55,7 +62,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth
                 FullName = fullName,
                 Role = role,
                 Gender = gender,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeHelper.GetVietnamTime()
             };
 
             await _userRepo.AddAsync(user);
@@ -68,6 +75,34 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth
         public async Task<bool> UsernameExistsAsync(string username)
         {
             return await _userRepo.UsernameExistsAsync(username);
+        }
+
+        public string GenerateJwtToken(User user)
+        {
+            var jwtSettings = _config.GetSection("JwtSettings");
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!));
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var avatarUrl = user.Avatar?.Url ?? AvatarHelper.ForUser(user.Id.ToString(), user.Gender);
+
+            var claims = new List<System.Security.Claims.Claim>
+            {
+                new System.Security.Claims.Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new System.Security.Claims.Claim(ClaimTypes.Name, user.Username),
+                new System.Security.Claims.Claim(ClaimTypes.Role, user.Role.ToString()),
+                new System.Security.Claims.Claim("FullName", user.FullName),
+                new System.Security.Claims.Claim("AvatarUrl", avatarUrl)
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: jwtSettings["Issuer"],
+                audience: jwtSettings["Audience"],
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(double.Parse(jwtSettings["ExpiryMinutes"]!)),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model HistoryGeoQuiz_PrimarySchool.ViewModels.AddStudentToClassViewModel
+@model AddStudentToClassViewModel
 
 @{
     ViewData["Title"] = "Thêm Học Sinh";
@@ -51,7 +51,7 @@
                             <label asp-for="Password" class="form-label">
                                 <i class="bi bi-key"></i> Mật khẩu <span class="text-danger">*</span>
                             </label>
-                            <input asp-for="Password" class="form-control" placeholder="••••••" />
+                            <input asp-for="Password" class="form-control" placeholder="••••••" type="password" />
                             <span asp-validation-for="Password" class="text-danger small"></span>
                         </div>
 
@@ -59,7 +59,7 @@
                             <label asp-for="ConfirmPassword" class="form-label">
                                 <i class="bi bi-key-fill"></i> Xác nhận mật khẩu <span class="text-danger">*</span>
                             </label>
-                            <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••" />
+                            <input asp-for="ConfirmPassword" class="form-control" placeholder="••••••" type="password" />
                             <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
                         </div>
 

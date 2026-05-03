@@ -1,7 +1,7 @@
 using HistoryGeoQuiz_PrimarySchool.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace HistoryGeoQuiz_PrimarySchool.ViewModels
+namespace HistoryGeoQuiz_PrimarySchool.ViewModels.Auth
 {
     public class ProfileViewModel
     {

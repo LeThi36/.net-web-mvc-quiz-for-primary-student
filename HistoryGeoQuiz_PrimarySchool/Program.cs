@@ -12,11 +12,19 @@ using HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Teacher;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Implement.Core;
 using HistoryGeoQuiz_PrimarySchool.Options;
 using HistoryGeoQuiz_PrimarySchool.Services.Implement.Storage;
+using HistoryGeoQuiz_PrimarySchool.Services.Interfaces.Analytic;
+using HistoryGeoQuiz_PrimarySchool.Services.Implement.Analytic;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register CodePages for legacy encodings (Windows-1258, ExcelDataReader)
 System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+// [D1] FIX: Enable legacy timestamp behavior for Npgsql to store local time consistently
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -65,6 +73,37 @@ builder.Services.AddSession(options =>
     options.Cookie.Name = ".HGQPS.Session"; // Custom name to avoid fingerprinting
 });
 
+// Configure JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["Secret"]!))
+    };
+
+    // [S7.4] FIX: Read token from secure cookie
+    options.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            context.Token = context.Request.Cookies["AuthToken"];
+            return Task.CompletedTask;
+        }
+    };
+});
+
 var app = builder.Build();
 
 // Register global exception middleware
@@ -81,6 +120,9 @@ else
     // [S10] FIX: HTTPS enforcement in production
     app.UseHsts();
 }
+
+// Handle 404, 403, etc. using the same Error page
+app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 
 // [S7.2] FIX: Security headers to prevent common web attacks
 app.Use(async (context, next) =>
@@ -105,6 +147,7 @@ app.UseRouting();
 
 app.UseSession();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(

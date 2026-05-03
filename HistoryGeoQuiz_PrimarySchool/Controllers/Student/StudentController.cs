@@ -3,6 +3,7 @@ using HistoryGeoQuiz_PrimarySchool.Constants;
 using HistoryGeoQuiz_PrimarySchool.Enums;
 using HistoryGeoQuiz_PrimarySchool.Filters;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers
 {
@@ -24,7 +25,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
 
             ViewBag.ClassName = className;
             ViewBag.HomeroomTeacher = homeroomTeacher;
-            ViewBag.UserName = HttpContext.Session.GetString(SessionKeys.UserName);
+            ViewBag.UserName = GetCurrentUserName();
 
             var model = await _testService.GetStudentDashboardAsync(userId);
             return View(model);
@@ -44,7 +45,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitQuiz(Guid lessonId, Dictionary<string, Guid> answers, DateTime startTime)
         {
-            var timeTakenSeconds = (int)(DateTime.UtcNow - startTime).TotalSeconds;
+            var timeTakenSeconds = (int)(DateTimeHelper.GetVietnamTime() - startTime).TotalSeconds;
             if (timeTakenSeconds < 0) timeTakenSeconds = 0;
 
             var testResult = await _testService.SubmitQuizAsync(lessonId, answers, GetCurrentUserId(), timeTakenSeconds);

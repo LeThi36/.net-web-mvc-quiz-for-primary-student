@@ -46,7 +46,7 @@
         
         <form asp-action="SubmitQuiz" method="post" id="quizForm">
             <input type="hidden" name="lessonId" value="@Model.LessonId" />
-            <input type="hidden" name="startTime" value="@DateTime.UtcNow.ToString("O")" />
+            <input type="hidden" name="startTime" value="@HistoryGeoQuiz_PrimarySchool.Helpers.DateTimeHelper.GetVietnamTime().ToString("O")" />
             
             @foreach (var question in Model.Questions)
             {

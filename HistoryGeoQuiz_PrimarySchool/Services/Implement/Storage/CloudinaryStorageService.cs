@@ -1,4 +1,4 @@
-using CloudinaryDotNet;
+﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
 using HistoryGeoQuiz_PrimarySchool.Enums;
 using HistoryGeoQuiz_PrimarySchool.Options;

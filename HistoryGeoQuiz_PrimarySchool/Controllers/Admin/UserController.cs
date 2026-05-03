@@ -3,6 +3,7 @@ using HistoryGeoQuiz_PrimarySchool.Enums;
 using HistoryGeoQuiz_PrimarySchool.Filters;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Admin;
 using ClosedXML.Excel;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers
@@ -108,9 +109,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             worksheet.Cell(1, 1).Value = "Họ và tên";
             worksheet.Cell(1, 2).Value = "Tên đăng nhập";
             worksheet.Cell(1, 3).Value = "Mật khẩu";
+            worksheet.Cell(1, 4).Value = "Giới tính (Nam/Nữ)";
 
             // Style header
-            var headerRange = worksheet.Range(1, 1, 1, 3);
+            var headerRange = worksheet.Range(1, 1, 1, 4);
             headerRange.Style.Font.Bold = true;
             headerRange.Style.Fill.BackgroundColor = XLColor.LightBlue;
             headerRange.Style.Border.OutsideBorder = XLBorderStyleValues.Thin;
@@ -119,10 +121,12 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             worksheet.Cell(2, 1).Value = "Giáo Viên A";
             worksheet.Cell(2, 2).Value = "giaoviena";
             worksheet.Cell(2, 3).Value = "123456";
+            worksheet.Cell(2, 4).Value = "Nam";
 
             worksheet.Cell(3, 1).Value = "Giáo Viên B";
             worksheet.Cell(3, 2).Value = "giaovienb";
             worksheet.Cell(3, 3).Value = "123456";
+            worksheet.Cell(3, 4).Value = "Nữ";
 
             // Auto-fit columns
             worksheet.Columns().AdjustToContents();

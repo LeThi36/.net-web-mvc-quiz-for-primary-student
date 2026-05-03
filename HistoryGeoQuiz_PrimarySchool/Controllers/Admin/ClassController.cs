@@ -4,8 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using HistoryGeoQuiz_PrimarySchool.Data;
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Admin;
 using HistoryGeoQuiz_PrimarySchool.Constants;
 using HistoryGeoQuiz_PrimarySchool.Enums;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 using ClosedXML.Excel;
 using System.Web;
 
@@ -111,7 +113,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         {
             if (ModelState.IsValid)
             {
-                classRoom.CreatedAt = DateTime.UtcNow;
+                classRoom.CreatedAt = DateTimeHelper.GetVietnamTime();
                 _context.Add(classRoom);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -144,16 +146,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             {
                 try
                 {
-                    // Ensure DateTime is UTC for PostgreSQL
-                    if (classRoom.CreatedAt.Kind == DateTimeKind.Unspecified)
-                    {
-                        classRoom.CreatedAt = DateTime.SpecifyKind(classRoom.CreatedAt, DateTimeKind.Utc);
-                    }
-                    else if (classRoom.CreatedAt.Kind == DateTimeKind.Local)
-                    {
-                        classRoom.CreatedAt = classRoom.CreatedAt.ToUniversalTime();
-                    }
-                    
+                    // No need for SpecifyKind due to legacy behavior enablement
                     _context.Update(classRoom);
                     await _context.SaveChangesAsync();
                 }
@@ -219,7 +212,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
                     ClassRoomId = classRoomId,
                     TeacherId = teacherId,
                     Subject = subject,
-                    AssignedDate = DateTime.UtcNow
+                    AssignedDate = DateTimeHelper.GetVietnamTime()
                 };
                 _context.Add(assignment);
                 await _context.SaveChangesAsync();
@@ -308,7 +301,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
                     Password = hashedPassword,
                     Role = UserRole.Student,
                     ClassRoomId = model.ClassRoomId,
-                    CreatedAt = DateTime.UtcNow
+                    CreatedAt = DateTimeHelper.GetVietnamTime()
                 };
 
                 _context.Users.Add(student);
@@ -544,7 +537,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
                         Password = hashedPassword,
                         Role = UserRole.Student,
                         ClassRoomId = model.ClassRoomId,
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTimeHelper.GetVietnamTime()
                     };
 
                     _context.Users.Add(student);

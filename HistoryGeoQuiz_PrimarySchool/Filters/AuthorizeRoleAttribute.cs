@@ -25,13 +25,19 @@ namespace HistoryGeoQuiz_PrimarySchool.Filters
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var roleStr = context.HttpContext.Session.GetString(SessionKeys.UserRole);
+            var user = context.HttpContext.User;
 
-            if (string.IsNullOrEmpty(roleStr) || 
-                !Enum.TryParse<UserRole>(roleStr, out var userRole) || 
-                !_roles.Contains(userRole))
+            if (!user.Identity?.IsAuthenticated ?? true)
             {
                 context.Result = new RedirectToActionResult("Login", "Account", null);
+                return;
+            }
+
+            var hasRole = _roles.Any(r => user.IsInRole(r.ToString()));
+
+            if (!hasRole)
+            {
+                context.Result = new RedirectToActionResult("AccessDenied", "Account", null);
                 return;
             }
 

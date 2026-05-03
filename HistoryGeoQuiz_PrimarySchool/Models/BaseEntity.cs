@@ -1,3 +1,5 @@
+using HistoryGeoQuiz_PrimarySchool.Helpers;
+
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
     /// <summary>
@@ -8,7 +10,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
     {
         public Guid Id { get; set; } = Guid.NewGuid();
 
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTimeHelper.GetVietnamTime();
 
         /// <summary>Soft delete flag. When true, entity is logically deleted.</summary>
         public bool IsDeleted { get; set; } = false;

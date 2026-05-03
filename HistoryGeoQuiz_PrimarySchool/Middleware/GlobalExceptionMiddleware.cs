@@ -2,8 +2,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Middleware
 {
     /// <summary>
     /// Global exception handler middleware.
-    /// Catches unhandled exceptions, logs them, and redirects to a user-friendly error page.
-    /// Prevents raw stack traces from leaking to users in production.
+    /// Logs unhandled exceptions and allows the system's exception handler to show the error page.
     /// </summary>
     public class GlobalExceptionMiddleware
     {
@@ -26,12 +25,10 @@ namespace HistoryGeoQuiz_PrimarySchool.Middleware
             {
                 _logger.LogError(ex, "Unhandled exception on {Method} {Path}",
                     context.Request.Method, context.Request.Path);
-
-                // Avoid redirect loops on error page itself
-                if (!context.Response.HasStarted)
-                {
-                    context.Response.Redirect("/Home/Error");
-                }
+                
+                // Rethrow to let app.UseExceptionHandler handle it properly
+                // while preserving the exception information for the Error page.
+                throw;
             }
         }
     }

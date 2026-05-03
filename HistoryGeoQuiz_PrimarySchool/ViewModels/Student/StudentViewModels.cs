@@ -1,6 +1,6 @@
-using HistoryGeoQuiz_PrimarySchool.Models;
+﻿using HistoryGeoQuiz_PrimarySchool.Models;
 
-namespace HistoryGeoQuiz_PrimarySchool.ViewModels
+namespace HistoryGeoQuiz_PrimarySchool.ViewModels.Student
 {
     public class StudentDashboardViewModel
     {

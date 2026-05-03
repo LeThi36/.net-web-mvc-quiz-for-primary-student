@@ -27,13 +27,13 @@
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                         
                         <div class="mb-3">
-                            <label asp-for="ClassName" class="form-label control-label fw-bold"></label>
+                            <label asp-for="ClassName" class="form-label control-label fw-bold">Tên lớp</label>
                             <input asp-for="ClassName" class="form-control" placeholder="Ví dụ: 1/1, 5/2..." />
                             <span asp-validation-for="ClassName" class="text-danger"></span>
                         </div>
 
                         <div class="mb-3">
-                            <label asp-for="Grade" class="form-label control-label fw-bold"></label>
+                            <label asp-for="Grade" class="form-label control-label fw-bold">Khối</label>
                             <select asp-for="Grade" class="form-select">
                                 <option value="1">Khối 1</option>
                                 <option value="2">Khối 2</option>

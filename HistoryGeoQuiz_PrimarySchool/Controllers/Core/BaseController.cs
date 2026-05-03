@@ -1,6 +1,6 @@
-using Microsoft.AspNetCore.Mvc;
-using HistoryGeoQuiz_PrimarySchool.Constants;
+﻿using Microsoft.AspNetCore.Mvc;
 using HistoryGeoQuiz_PrimarySchool.Enums;
+using System.Security.Claims;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers
 {
@@ -10,23 +10,23 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
     /// </summary>
     public abstract class BaseController : Controller
     {
-        /// <summary>Get current logged-in user's ID from session.</summary>
+        /// <summary>Get current logged-in user's ID from Claims.</summary>
         protected Guid GetCurrentUserId()
         {
-            var userIdStr = HttpContext.Session.GetString(SessionKeys.UserId);
-            return Guid.TryParse(userIdStr, out var userId) ? userId : Guid.Empty;
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return userIdClaim != null && Guid.TryParse(userIdClaim.Value, out var userId) ? userId : Guid.Empty;
         }
 
-        /// <summary>Get current logged-in user's role from session.</summary>
+        /// <summary>Get current logged-in user's role from Claims.</summary>
         protected string? GetCurrentUserRole() =>
-            HttpContext.Session.GetString(SessionKeys.UserRole);
+            User.FindFirst(ClaimTypes.Role)?.Value;
 
-        /// <summary>Get current logged-in user's display name from session.</summary>
+        /// <summary>Get current logged-in user's display name from Claims.</summary>
         protected string? GetCurrentUserName() =>
-            HttpContext.Session.GetString(SessionKeys.UserName);
+            User.FindFirst("FullName")?.Value;
 
         /// <summary>Check if current user has the specified role.</summary>
         protected bool IsInRole(UserRole role) =>
-            Enum.TryParse<UserRole>(GetCurrentUserRole(), out var sessionRole) && sessionRole == role;
+            User.IsInRole(role.ToString());
     }
 }

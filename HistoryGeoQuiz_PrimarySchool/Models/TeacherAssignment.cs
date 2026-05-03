@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 
 namespace HistoryGeoQuiz_PrimarySchool.Models
 {
@@ -19,8 +20,8 @@ namespace HistoryGeoQuiz_PrimarySchool.Models
 
         [Required]
         [Display(Name = "Môn học được phân công")]
-        public string Subject { get; set; } = "LichSu"; // "LichSu", "DiaLy", "All"
+        public string Subject { get; set; }
 
-        public DateTime AssignedDate { get; set; } = DateTime.UtcNow;
+        public DateTime AssignedDate { get; set; } = DateTimeHelper.GetVietnamTime();
     }
 }
