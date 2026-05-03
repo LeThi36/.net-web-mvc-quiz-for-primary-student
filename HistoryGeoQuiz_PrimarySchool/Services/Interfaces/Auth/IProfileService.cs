@@ -1,4 +1,4 @@
-using HistoryGeoQuiz_PrimarySchool.ViewModels;
+﻿using HistoryGeoQuiz_PrimarySchool.ViewModels.Auth;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Interfaces
 {

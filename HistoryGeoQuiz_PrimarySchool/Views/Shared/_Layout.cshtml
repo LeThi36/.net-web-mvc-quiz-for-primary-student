@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi">
+@using System.Security.Claims
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,11 +25,11 @@
     <nav class="navbar app-navbar navbar-expand-lg sticky-top">
         <div class="container">
             @{
-                var isSignedIn = Context.Session.GetString(SessionKeys.UserId) != null;
-                var role = Context.Session.GetString(SessionKeys.UserRole);
-                var userName = Context.Session.GetString(SessionKeys.UserName);
-                var userId = Context.Session.GetString(SessionKeys.UserId);
-                var avatarUrl = Context.Session.GetString(SessionKeys.UserAvatarUrl);
+                var isSignedIn = User.Identity?.IsAuthenticated ?? false;
+                var role = User.FindFirst(ClaimTypes.Role)?.Value;
+                var userName = User.FindFirst("FullName")?.Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var avatarUrl = User.FindFirst("AvatarUrl")?.Value;
 
                 if (isSignedIn && string.IsNullOrWhiteSpace(avatarUrl) && !string.IsNullOrWhiteSpace(userId))
                 {

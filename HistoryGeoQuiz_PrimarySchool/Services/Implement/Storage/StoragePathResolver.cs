@@ -1,4 +1,4 @@
-using HistoryGeoQuiz_PrimarySchool.Enums;
+﻿using HistoryGeoQuiz_PrimarySchool.Enums;
 using HistoryGeoQuiz_PrimarySchool.Options;
 using Microsoft.Extensions.Options;
 

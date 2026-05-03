@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace HistoryGeoQuiz_PrimarySchool.ViewModels
+namespace HistoryGeoQuiz_PrimarySchool.ViewModels.Admin
 {
     /// <summary>
     /// ViewModel for adding a new student to a class (creates account)

@@ -1,4 +1,4 @@
-﻿@model HistoryGeoQuiz_PrimarySchool.ViewModels.ImportTeachersViewModel
+@model ImportTeachersViewModel
 
 @{
     ViewData["Title"] = "Import Danh sách Giáo viên";
@@ -31,7 +31,7 @@
 
                     <form asp-action="ImportTeachers" enctype="multipart/form-data" method="post">
                         <div class="mb-4">
-                            <label asp-for="ExcelFile" class="form-label fw-bold"></label>
+                            <label asp-for="ExcelFile" class="form-label fw-bold">Chọn file Excel</label>
                             <input asp-for="ExcelFile" class="form-control" type="file" accept=".xlsx" />
                             <span asp-validation-for="ExcelFile" class="text-danger small"></span>
                         </div>
@@ -67,6 +67,7 @@
                                 <th>Cột A</th>
                                 <th>Cột B</th>
                                 <th>Cột C</th>
+                                <th>Cột D</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -74,13 +75,14 @@
                                 <td><strong>Họ và tên</strong></td>
                                 <td><strong>Tên đăng nhập</strong></td>
                                 <td><strong>Mật khẩu</strong></td>
+                                <td><strong>Giới tính</strong> (Nam/Nữ)</td>
                             </tr>
                         </tbody>
                     </table>
                     <ul class="mb-0 small">
                         <li>Dòng đầu tiên là tiêu đề, dữ liệu bắt đầu từ dòng 2</li>
                         <li>Tên đăng nhập không được trùng với tài khoản đã có</li>
-                        <li><strong>Trường hợp trùng họ tên:</strong> Hãy đặt <em>Tên đăng nhập</em> khác nhau (VD: gv_nguyenvana1, gv_nguyenvana2...) để phân biệt</li>
+                        <li><strong>Trường hợp trùng họ tên:</strong> Hãy đặt <strong><em>Tên đăng nhập</em></strong> khác nhau (VD: gv_nguyenvana1, gv_nguyenvana2...) để phân biệt</li>
                         <li>Mỗi giáo viên sẽ được tạo tài khoản tự động với quyền quản lý</li>
                     </ul>
                 </div>

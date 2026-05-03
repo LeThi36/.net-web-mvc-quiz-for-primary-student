@@ -1,5 +1,6 @@
-using HistoryGeoQuiz_PrimarySchool.Models;
+﻿using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Student;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Interfaces
 {

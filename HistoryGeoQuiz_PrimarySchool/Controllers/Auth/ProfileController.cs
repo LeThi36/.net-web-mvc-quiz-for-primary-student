@@ -1,7 +1,7 @@
 using HistoryGeoQuiz_PrimarySchool.Constants;
 using HistoryGeoQuiz_PrimarySchool.Filters;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
-using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Auth;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers.Auth

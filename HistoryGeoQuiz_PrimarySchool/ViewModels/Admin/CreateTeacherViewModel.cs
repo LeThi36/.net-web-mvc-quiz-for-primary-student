@@ -1,6 +1,7 @@
+using HistoryGeoQuiz_PrimarySchool.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace HistoryGeoQuiz_PrimarySchool.ViewModels
+namespace HistoryGeoQuiz_PrimarySchool.ViewModels.Admin
 {
     public class CreateTeacherViewModel
     {
@@ -22,5 +23,9 @@ namespace HistoryGeoQuiz_PrimarySchool.ViewModels
         [Display(Name = "Xác nhận mật khẩu")]
         [Compare("Password", ErrorMessage = "Mật khẩu xác nhận không khớp")]
         public string ConfirmPassword { get; set; } = null!;
+
+        [Required(ErrorMessage = "Vui lòng chọn giới tính")]
+        [Display(Name = "Giới tính")]
+        public Gender Gender { get; set; }
     }
 }

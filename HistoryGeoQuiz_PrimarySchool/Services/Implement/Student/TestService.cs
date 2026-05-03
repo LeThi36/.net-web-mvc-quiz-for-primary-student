@@ -1,7 +1,9 @@
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Student;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
 {
@@ -167,7 +169,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
                 CorrectAnswers = correctCount,
                 Score = score,
                 IsPassed = score >= 5,
-                CompletedAt = DateTime.UtcNow,
+                CompletedAt = DateTimeHelper.GetVietnamTime(),
                 TimeTakenSeconds = timeTakenSeconds,
                 // P1.3 FIX: Use navigation property — EF Core auto-assigns FK
                 Details = testDetails
@@ -195,7 +197,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Student
             if (result.CorrectAnswers >= excellentThreshold)
                 message = "🌟 Hoàn thành xuất sắc! Con giỏi lắm! 🌟";
             else if (result.CorrectAnswers >= goodThreshold)
-                message = "👏 Hoàn thành tốt! Con làm tốt lắm! 👏";
+                message = "👍 Hoàn thành tốt! Con làm tốt lắm! 👍";
             else if (result.Score >= 5)
                 message = "😊 Hoàn thành! Cố gắng thêm nhé! 😊";
             else

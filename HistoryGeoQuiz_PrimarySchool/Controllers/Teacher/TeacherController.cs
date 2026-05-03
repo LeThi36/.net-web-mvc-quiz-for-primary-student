@@ -6,7 +6,10 @@ using HistoryGeoQuiz_PrimarySchool.Filters;
 using HistoryGeoQuiz_PrimarySchool.Helpers;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Teacher;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Analytic;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using HistoryGeoQuiz_PrimarySchool.Services.Interfaces.Analytic;
 
 namespace HistoryGeoQuiz_PrimarySchool.Controllers
 {
@@ -36,7 +39,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
         public async Task<IActionResult> Index()
         {
             var lessons = await _lessonService.GetLessonsByTeacherAsync(GetCurrentUserId());
-            ViewBag.UserName = HttpContext.Session.GetString(SessionKeys.UserName);
+            ViewBag.UserName = GetCurrentUserName();
             return View(lessons);
         }
 
@@ -251,6 +254,14 @@ namespace HistoryGeoQuiz_PrimarySchool.Controllers
             if (analytics == null) return NotFound();
 
             return View(analytics);
+        }
+
+        public async Task<IActionResult> StudentReport(Guid lessonId, Guid studentId)
+        {
+            var report = await _analyticsService.GetStudentReportAsync(lessonId, studentId, GetCurrentUserId());
+            if (report == null) return NotFound();
+
+            return View(report);
         }
 
         #endregion

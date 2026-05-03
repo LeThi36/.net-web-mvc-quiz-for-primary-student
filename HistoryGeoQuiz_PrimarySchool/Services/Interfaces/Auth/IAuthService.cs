@@ -1,4 +1,4 @@
-using HistoryGeoQuiz_PrimarySchool.Models;
+﻿using HistoryGeoQuiz_PrimarySchool.Models;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Interfaces
 {
@@ -12,5 +12,8 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Interfaces
 
         /// <summary>Check if a username already exists.</summary>
         Task<bool> UsernameExistsAsync(string username);
+
+        /// <summary>Generate JWT token for a user.</summary>
+        string GenerateJwtToken(User user);
     }
 }

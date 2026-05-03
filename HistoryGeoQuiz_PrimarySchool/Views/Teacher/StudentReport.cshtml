@@ -1,0 +1,301 @@
+@model StudentReportViewModel
+
+@{
+    ViewData["Title"] = "Báo cáo học tập - " + Model.StudentName;
+    Layout = "_Layout";
+}
+
+<style>
+    /* CSS for Web Display */
+    .report-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        padding: 40px;
+        margin-bottom: 30px;
+        border: 1px solid #f0f0f0;
+    }
+    .badge-excellent { background-color: #ffd700; color: #000; }
+    .badge-good { background-color: #28a745; color: #fff; }
+    .badge-fair { background-color: #17a2b8; color: #fff; }
+    .badge-average { background-color: #ffc107; color: #000; }
+    .badge-try { background-color: #dc3545; color: #fff; }
+
+    .stat-box {
+        background: #f8f9fa;
+        border-radius: 15px;
+        padding: 20px;
+        text-align: center;
+        height: 100%;
+    }
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0d6efd;
+    }
+    .chart-container {
+        position: relative;
+        height: 300px;
+        width: 100%;
+    }
+
+    /* CSS for Printing */
+    @@media print {
+        .navbar, .footer, .btn-print-area, .breadcrumb-area {
+            display: none !important;
+        }
+        body {
+            background-color: #fff !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .main-content {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .container {
+            max-width: 100% !important;
+            width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        .report-card {
+            box-shadow: none !important;
+            border: none !important;
+            padding: 0 !important;
+        }
+        .report-header {
+            border-bottom: 2px solid #000 !important;
+            padding-bottom: 20px !important;
+            margin-bottom: 30px !important;
+        }
+        .stat-box {
+            border: 1px solid #eee !important;
+        }
+    }
+</style>
+
+<div class="container mt-4 mb-5">
+    <!-- Action Bar -->
+    <div class="d-flex justify-content-between align-items-center mb-4 btn-print-area">
+        <a asp-action="QuestionAnalytics" asp-route-lessonId="@Model.LessonId" class="btn btn-outline-secondary mt-3">
+            <i class="bi bi-arrow-left me-1"></i> Quay lại
+        </a>
+        <button onclick="window.print()" class="btn btn-primary px-4 rounded-pill shadow-sm">
+            <i class="bi bi-printer-fill me-2"></i> In Báo Cáo
+        </button>
+    </div>
+
+    <div class="report-card">
+        <!-- Header -->
+        <div class="row report-header align-items-center mb-5">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center mb-3">
+                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 60px; height: 60px; font-size: 1.5rem; font-weight: 700;">
+                        <i class="bi bi-mortarboard"></i>
+                    </div>
+                    <div>
+                        <h2 class="fw-bold mb-0 text-primary text-uppercase">Phiếu Kết Quả Học Tập</h2>
+                        <p class="text-muted mb-0">Hệ thống Sunny Quiz Tiểu Học</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 text-md-end">
+                <p class="mb-1">Ngày xuất báo cáo: <strong>@DateTime.Now.ToString("dd/MM/yyyy")</strong></p>
+                <span class="badge @(Model.Evaluation == "Xuất sắc" ? "badge-excellent" : 
+                                   Model.Evaluation == "Giỏi" ? "badge-good" : 
+                                   Model.Evaluation == "Khá" ? "badge-fair" : 
+                                   Model.Evaluation == "Hoàn thành" ? "badge-average" : "badge-try") p-2 px-3 fs-6 rounded-pill">
+                    Xếp loại: @Model.Evaluation
+                </span>
+            </div>
+        </div>
+
+        <!-- Student & Lesson Info -->
+        <div class="row mb-5">
+            <div class="col-md-6">
+                <h5 class="fw-bold border-start border-4 border-primary ps-3 mb-3">Thông tin học sinh</h5>
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="text-muted py-1" style="width: 150px;">Họ và tên:</td>
+                        <td class="fw-bold py-1">@Model.StudentName</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted py-1">Lớp:</td>
+                        <td class="fw-bold py-1">@Model.ClassName</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted py-1">Giáo viên:</td>
+                        <td class="fw-bold py-1">@Model.HomeroomTeacher</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h5 class="fw-bold border-start border-4 border-primary ps-3 mb-3">Thông tin bài học</h5>
+                <table class="table table-borderless">
+                    <tr>
+                        <td class="text-muted py-1" style="width: 150px;">Bài học:</td>
+                        <td class="fw-bold py-1">@Model.LessonTitle</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted py-1">Môn học:</td>
+                        <td class="fw-bold py-1">@Model.Subject</td>
+                    </tr>
+                    <tr>
+                        <td class="text-muted py-1">Câu đúng:</td>
+                        <td class="fw-bold py-1">@Model.CorrectAnswers / @Model.TotalQuestions</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="row mb-5 g-4">
+            <div class="col-6 col-md-3">
+                <div class="stat-box shadow-sm">
+                    <p class="text-muted small mb-1">Điểm của con</p>
+                    <div class="stat-value text-primary">@Model.BestScore.ToString("0.0")</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-box shadow-sm">
+                    <p class="text-muted small mb-1">Trung bình lớp</p>
+                    <div class="stat-value text-secondary">@Model.ClassAverageScore.ToString("0.0")</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-box shadow-sm">
+                    <p class="text-muted small mb-1">Số lần nỗ lực</p>
+                    <div class="stat-value text-success">@Model.TotalAttempts</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stat-box shadow-sm">
+                    <p class="text-muted small mb-1">Thời gian TB</p>
+                    <div class="stat-value text-info">@TimeSpan.FromSeconds(Model.AverageTimeSeconds).ToString(@"mm\:ss")</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="row mb-5">
+            <div class="col-md-7">
+                <h5 class="fw-bold border-start border-4 border-success ps-3 mb-4">Biểu đồ nỗ lực (Tiến bộ qua các lần làm bài)</h5>
+                <div class="chart-container">
+                    <canvas id="effortChart"></canvas>
+                </div>
+                <p class="text-muted small mt-2 text-center">
+                    <i class="bi bi-info-circle"></i> Thể hiện sự kiên trì của con qua từng lượt thử thách.
+                </p>
+            </div>
+            <div class="col-md-5">
+                <h5 class="fw-bold border-start border-4 border-warning ps-3 mb-4">So sánh với lớp</h5>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teacher's Note -->
+        <div class="teacher-note p-4 bg-light rounded-4 border-start border-5 border-info">
+            <h6 class="fw-bold mb-2"><i class="bi bi-chat-left-text me-2"></i>Lời nhắn của Giáo viên:</h6>
+            <div class="p-3 bg-white rounded border border-light" style="min-height: 80px;">
+                <!-- Placeholder for future feature to save comments -->
+                @if (Model.BestScore >= 8)
+                {
+                    <span>Con tiếp thu bài rất tốt và có sự tập trung cao. Cần duy trì phong độ này ở các bài học tiếp theo nhé!</span>
+                }
+                else if (Model.BestScore >= 5)
+                {
+                    <span>Con đã hoàn thành bài học. Cố gắng dành thêm thời gian ôn lại các phần còn hay nhầm lẫn để đạt kết quả cao hơn.</span>
+                }
+                else
+                {
+                    <span>Con cần tập trung hơn khi đọc đề bài. Hãy dành thời gian xem lại các câu sai để rút kinh nghiệm con nhé.</span>
+                }
+            </div>
+        </div>
+
+        <!-- Signature Area for Printing -->
+        <div class="row mt-5 pt-5 d-none d-print-flex">
+            <div class="col-6 text-center">
+                <p class="mb-5">Chữ ký Phụ huynh</p>
+                <div style="height: 60px;"></div>
+                <p class="text-muted">................................</p>
+            </div>
+            <div class="col-6 text-center">
+                <p class="mb-5">Giáo viên xác nhận</p>
+                <div style="height: 60px;"></div>
+                <p class="fw-bold">@Model.HomeroomTeacher</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // 1. Effort Chart (Line)
+        const effortCtx = document.getElementById('effortChart').getContext('2d');
+        new Chart(effortCtx, {
+            type: 'line',
+            data: {
+                labels: @Json.Serialize(Model.AttemptHistory.Select(h => "Lần " + h.AttemptNumber)),
+                datasets: [{
+                    label: 'Điểm số',
+                    data: @Json.Serialize(Model.AttemptHistory.Select(h => h.Score)),
+                    borderColor: '#0d6efd',
+                    backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointBackgroundColor: '#0d6efd'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // 2. Comparison Chart (Bar)
+        const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+        new Chart(comparisonCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Điểm của con', 'Trung bình lớp'],
+                datasets: [{
+                    data: [@Model.BestScore, @Model.ClassAverageScore],
+                    backgroundColor: ['#0d6efd', '#adb5bd'],
+                    borderRadius: 10,
+                    barThickness: 60
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    </script>
+}

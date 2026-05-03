@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace HistoryGeoQuiz_PrimarySchool.ViewModels
+namespace HistoryGeoQuiz_PrimarySchool.ViewModels.Admin
 {
     public class ImportTeachersViewModel
     {

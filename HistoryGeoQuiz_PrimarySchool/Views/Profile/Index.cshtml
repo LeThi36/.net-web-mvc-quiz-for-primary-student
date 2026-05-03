@@ -76,8 +76,8 @@
                                     <div class="input-group">
                                         <span class="input-group-text @(isStudent ? "bg-light" : "") border-0"><i class="bi bi-gender-ambiguous"></i></span>
                                         <select asp-for="Gender" class="form-select @(isStudent ? "bg-light border-0" : "")" 
-                                                asp-items="Html.GetEnumSelectList<Gender>()" 
-                                                disabled="@isStudent">
+                                                 asp-items="Html.GetEnumSelectList<Gender>()" 
+                                                 disabled="@isStudent">
                                             <option value="">-- Chọn giới tính --</option>
                                         </select>
                                     </div>

@@ -1,6 +1,7 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Admin;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Interfaces
 {

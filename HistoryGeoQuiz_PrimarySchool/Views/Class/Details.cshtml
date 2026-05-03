@@ -1,4 +1,4 @@
-﻿@model HistoryGeoQuiz_PrimarySchool.Models.ClassRoom
+@model HistoryGeoQuiz_PrimarySchool.Models.ClassRoom
 
 @{
     ViewData["Title"] = "Chi tiết Lớp";
@@ -67,16 +67,16 @@
                                     <label class="form-label small">Môn Dạy</label>
                                     <select name="subject" class="form-select">
                                         <option value="Toan">🔢 Toán</option>
-                                        <option value="TiengViet">📚 Tiếng Việt</option>
-                                        <option value="TiengAnh">🌎 Tiếng Anh</option>
+                                        <option value="TiengViet">📖 Tiếng Việt</option>
+                                        <option value="TiengAnh">🌍 Tiếng Anh</option>
                                         <option value="TNXH">🌿 TN & XH</option>
                                         <option value="LichSu">📜 Lịch Sử</option>
                                         <option value="DiaLy">🗺️ Địa Lý</option>
                                         <option value="KhoaHoc">🔬 Khoa Học</option>
                                         <option value="DaoDuc">⭐ Đạo Đức</option>
-                                        <option value="AmNhac">🎵 Âm Nhạc</option>
+                                        <option value="AmNhac">🎶 Âm Nhạc</option>
                                         <option value="MyThuat">🎨 Mỹ Thuật</option>
-                                        <option value="TheDuc">⚽ Thể Dục</option>
+                                        <option value="TheDuc">🏃 Thể Dục</option>
                                         <option value="TinHoc">💻 Tin Học</option>
                                     </select>
                                 </div>
@@ -106,16 +106,16 @@
                                             @{
                                                 var subjectName = assign.Subject switch {
                                                     "Toan" => "🔢 Toán",
-                                                    "TiengViet" => "📚 Tiếng Việt",
-                                                    "TiengAnh" => "🌎 Tiếng Anh",
+                                                    "TiengViet" => "📖 Tiếng Việt",
+                                                    "TiengAnh" => "🌍 Tiếng Anh",
                                                     "TNXH" => "🌿 TN & XH",
                                                     "LichSu" => "📜 Lịch Sử",
                                                     "DiaLy" => "🗺️ Địa Lý",
                                                     "KhoaHoc" => "🔬 Khoa Học",
                                                     "DaoDuc" => "⭐ Đạo Đức",
-                                                    "AmNhac" => "🎵 Âm Nhạc",
+                                                    "AmNhac" => "🎶 Âm Nhạc",
                                                     "MyThuat" => "🎨 Mỹ Thuật",
-                                                    "TheDuc" => "⚽ Thể Dục",
+                                                    "TheDuc" => "🏃 Thể Dục",
                                                     "TinHoc" => "💻 Tin Học",
                                                     _ => assign.Subject
                                                 };

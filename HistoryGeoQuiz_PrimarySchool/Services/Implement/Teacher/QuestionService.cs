@@ -1,7 +1,9 @@
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Teacher;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 using ExcelDataReader;
 using System.Web;
 
@@ -44,7 +46,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
                 LessonId = model.LessonId,
                 QuestionText = model.QuestionText,
                 OrderIndex = maxOrder + 1,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTimeHelper.GetVietnamTime()
             };
 
             await _questionRepo.AddAsync(question);
@@ -94,7 +96,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
 
             // Soft delete: mark as deleted, preserves TestDetail references
             question.IsDeleted = true;
-            question.DeletedAt = DateTime.UtcNow;
+            question.DeletedAt = DateTimeHelper.GetVietnamTime();
             await _questionRepo.SaveChangesAsync();
             return true;
         }
@@ -150,7 +152,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
                         LessonId = lessonId,
                         QuestionText = qText,
                         OrderIndex = maxOrder + (++count),
-                        CreatedAt = DateTime.UtcNow
+                        CreatedAt = DateTimeHelper.GetVietnamTime()
                     };
 
                     string ansA = HttpUtility.HtmlEncode(GetCell("DapAnA", "AnswerA"));

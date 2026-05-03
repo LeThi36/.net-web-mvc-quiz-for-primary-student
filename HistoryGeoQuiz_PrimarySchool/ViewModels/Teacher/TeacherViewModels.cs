@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using HistoryGeoQuiz_PrimarySchool.Models;
 
-namespace HistoryGeoQuiz_PrimarySchool.ViewModels
+namespace HistoryGeoQuiz_PrimarySchool.ViewModels.Teacher
 {
     public class CreateLessonViewModel
     {

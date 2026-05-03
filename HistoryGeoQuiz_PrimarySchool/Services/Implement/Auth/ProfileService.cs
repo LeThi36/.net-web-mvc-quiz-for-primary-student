@@ -3,7 +3,7 @@ using HistoryGeoQuiz_PrimarySchool.Helpers;
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
-using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Auth;
 using Microsoft.EntityFrameworkCore;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Auth

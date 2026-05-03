@@ -1,7 +1,9 @@
 using HistoryGeoQuiz_PrimarySchool.Models;
 using HistoryGeoQuiz_PrimarySchool.ViewModels;
+using HistoryGeoQuiz_PrimarySchool.ViewModels.Teacher;
 using HistoryGeoQuiz_PrimarySchool.Repositories.Interfaces;
 using HistoryGeoQuiz_PrimarySchool.Services.Interfaces;
+using HistoryGeoQuiz_PrimarySchool.Helpers;
 
 namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
 {
@@ -40,7 +42,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
                 Subject = model.Subject,
                 LessonNumber = model.LessonNumber,
                 CreatedByUserId = teacherId,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = DateTimeHelper.GetVietnamTime(),
                 IsActive = true,
                 ClassRoomId = model.ClassRoomId,
                 QuestionCountForExcellent = model.QuestionCountForExcellent,
@@ -82,7 +84,7 @@ namespace HistoryGeoQuiz_PrimarySchool.Services.Implement.Teacher
 
             // Soft delete: mark as deleted, data is preserved
             lesson.IsDeleted = true;
-            lesson.DeletedAt = DateTime.UtcNow;
+            lesson.DeletedAt = DateTimeHelper.GetVietnamTime();
             lesson.IsActive = false;
 
             await _lessonRepo.SaveChangesAsync();
